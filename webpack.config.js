@@ -20,7 +20,7 @@ const dotenv = require('dotenv').config();
 
 const parsed = dotenv.error ? {} : dotenv.parsed;
 const envVars = parsed || {};
-const PORT = envVars.PORT || 3000;
+const PORT = envVars.PORT || 3020;
 envVars.NODE_ENV = process.env.NODE_ENV;
 envVars.PORT = PORT;
 
@@ -71,10 +71,10 @@ const clientEntrypoints = [
     template: './src/client/dialog-demo-tailwindcss/index.html',
   },
   {
-    name: 'CLIENT - Sidebar About Page',
-    entry: './src/client/sidebar-about-page/index.js',
-    filename: 'sidebar-about-page',
-    template: './src/client/sidebar-about-page/index.html',
+    name: 'CLIENT - Sidebar Page',
+    entry: './src/client/macabacus-sidebar-main/index.js',
+    filename: 'macabacus-sidebar-main',
+    template: './src/client/macabacus-sidebar-main/index.html',
   },
 ];
 
