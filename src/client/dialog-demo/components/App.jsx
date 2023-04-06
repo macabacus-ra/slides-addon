@@ -36,8 +36,6 @@ const SheetEditor = () => {
 
   return (
     <div>
-      <div onClick={handleGetColors} style={{padding: '5px', border: '1px solid black', width: 'fit-content'}}>Get Colors</div>
-
       <div>
         <h4>Scope</h4>
         <ul>
