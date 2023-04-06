@@ -14,7 +14,7 @@ export const openDialog = () => {
   const html = HtmlService.createHtmlOutputFromFile('dialog-demo')
     .setWidth(600)
     .setHeight(600);
-    SlidesApp.getUi().showModalDialog(html, 'Sheet Editor');
+    SlidesApp.getUi().showModalDialog(html, 'Recolor');
 };
 
 export const openDialogBootstrap = () => {

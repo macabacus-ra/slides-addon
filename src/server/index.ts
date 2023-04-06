@@ -9,7 +9,7 @@ import {
 
 import { getSheetsData, addSheet, deleteSheet, setActiveSheet } from './sheets';
 
-import { getColors } from './shapes/recolor.js'
+import { loadColors } from './shapes/recolor.js'
 
 // Public functions must be exported as named exports
 export {
@@ -20,7 +20,7 @@ export {
   openDialogTailwindCSS,
   openSidebarMain,
   getSheetsData,
-  getColors,
+  loadColors,
   addSheet,
   deleteSheet,
   setActiveSheet,
