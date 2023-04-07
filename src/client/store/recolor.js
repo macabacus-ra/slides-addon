@@ -9,6 +9,7 @@ const initialState = {
     colorsObject: null,
     recolorArray: [],
     showReplaceDialog: false,
+
     colorsArray: [ 
         "#FF0000", "#FFA07A", "#FA8072", "#8DC4DE", "#7FFF00",  "#00FF7F", "#00FF7F", "#ADD8E6", "#008000", "#228B22", "#008B8B", 
         "#00BFFF", "#0000FF", "#0000CD", "#00008B", "#000080", "#4B0082", "#8A2BE2", "#9400D3","#9932CC", "#8B008B", "#800080",
@@ -20,6 +21,7 @@ const initialState = {
     shapeColorsListRaw: null,
     slideColorsListRaw: null,
     presentationColorsListRaw: null,
+
     colorNameType: 'hex', //default
     isRefreshed: false,
     replaceCount: 0, 
@@ -39,14 +41,44 @@ const initialState = {
 
 export const recolorStore = create((set) => ({
     ...initialState,
-    // setScope: (payload) => set(() => {
 
-    // }),
     setScope: (payload) => set(produce((state) => {
         state.currentScope = payload
     })),
 
+    setSelection: (payload) => set(produce((state) => {
+        state.selection = {
+            ...state.selection,
+            [payload]: !state.selection[payload],
+        }
+    })),
+
+    resetCount : () => set(produce((state) => {
+        state.replaceCount = 0
+    })),
+
     increase: () => set(produce((state) => { state.colors += 1 })),
     decrease: () => set(produce((state) => { state.colors -= 1 })),
-    reset: () => set((state) => (initialState))
+    
+    reset: () => set((state) => (initialState)),
+
+    setColors: (payload) => set(produce((state) => {
+
+        state.colorsObject = payload.colorsData
+
+        if(!state.shapeColorsListRaw && payload.scopeData === 'shapes') {
+            state.shapeColorsListRaw = payload.colorsData
+
+        } else if(!state.slideColorsListRaw && payload.scopeData === 'slides') {
+            state.slideColorsListRaw = payload.colorsData
+
+        } else if(!state.presentationColorsListRaw && payload.scopeData === 'presentation') {
+            state.presentationColorsListRaw = payload.colorsData
+        }   
+
+    })),
+
+    setList: (payload) => set(produce((state) => {
+        state.colorsList = payload
+    })),
 }))

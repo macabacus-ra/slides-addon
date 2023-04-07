@@ -1,9 +1,44 @@
 input {
-  font-family: 'Nunito', sans-serif;
-  width: 150px;
-  height: 28px;
+
   border: 1px solid #6b6b6b;
   border-radius: 4px;
+}
+
+
+:root{
+  --br: 4px;
+  --brdr: rgb(43, 142, 43); 
+  --recolorBackgrondColor: #f1f3f4;
+  --recolorLineColor: #c9c9c9;
+  --recolorBtnBorderColor: #d7d9da;
+  --recolorBtnFont: ##bac4c8;
+  --recolorBtnBackgroundColor: #fcfcfc;
+  --recolorFontColor: #636363;
+  --recolorMacabacusGreen: #2cac7c;
+  --recolorChooseColor: #46abde;
+  --recolorHeadingColor: ##534f50;
+}
+
+
+* {
+  padding: 0px;
+  margin: 0px;
+}
+
+html,
+body {
+background-color: #f1f3f4;
+padding: 10px;
+  /* padding: 20px;
+  margin: 0px; */
+}
+
+button:hover{
+
+  background-color: #24d69517;
+  border: 1px solid var(--recolorMacabacusGreen);
+  color: var(--recolorMacabacusGreen);
+
 }
 
 input:focus {
