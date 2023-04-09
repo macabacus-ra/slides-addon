@@ -3,6 +3,11 @@ export const loadColors = async (scope) => {
     let colorsObject;
     const startTime = Date.now();
 
+    let shapeIdObject = {};  // this is a global object that will hold a hex color and all the shapes that have this color. 
+    // This is so that, when user clicks recolor, we only have to loop through the shapes that have the selected colors, 
+    // and not through every shape on every slide getting data again and checking conditions
+
+
     if (scope === 'shapes') {
         // from every shape, depending on selection, get the color of the font, fill, and border/line
         let selections = SlidesApp.getActivePresentation().getSelection()
@@ -15,7 +20,7 @@ export const loadColors = async (scope) => {
             borders: []
         };
 
-        let result = await getColors(colorsData, shapes);
+        let result = await getColors(colorsData, shapes, shapeIdObject);
         colorsObject = result;
       }
 
@@ -32,7 +37,7 @@ export const loadColors = async (scope) => {
             for (let i = 0; i < slidesCount; i++) {
                 let shapes = slides[i].getPageElements()
                 if(shapes.length === 0){ continue } ; // if there are no shapes on the slide, skip it 
-                colorsData = await getColors(colorsData, shapes);
+                colorsData = await getColors(colorsData, shapes, shapeIdObject);
             }
             colorsObject = colorsData;
         }
@@ -51,22 +56,31 @@ export const loadColors = async (scope) => {
             for (let i = 0; i < slidesCount; i++) {
                 let shapes = slides[i].getPageElements()
                 if(shapes.length === 0){ continue } ; // if there are no shapes on the slide, skip it 
-                colorsData = await getColors(colorsData, shapes);
+                colorsData = await getColors(colorsData, shapes, shapeIdObject);
             }
             
             colorsObject = colorsData;
           }
+    colorsObject.colorsRef = shapeIdObject;
     colorsObject.time = Date.now() - startTime;
     return colorsObject
 };
 
 
-const getColors = async (dataObject, shapes) => {
+const getColors = async (dataObject, shapes, shapeIdObject) => {
     // this is the format of the incoming object  {
     //   fonts array
     //   fills array
     //   borders array
+    
     // }
+
+
+    // i nned to store all colors that are present in each shape... This is so that, when user
+    // selects colors to replace in a presentation scope, we no longer have to loop through ever slide, only 
+    // the shapes that have the selected colors.
+
+
 
     let shapesCount = shapes.length
     let fill = dataObject.fills  // empty object to hold and the colors and check uniqueness
@@ -102,6 +116,13 @@ const getColors = async (dataObject, shapes) => {
                     if(!fill[shapeFillColor]){
                         fill[shapeFillColor] = 1
                         dataObject.fills.push(shapeFillColor);
+
+                        if(!shapeIdObject[shapeFillColor]){ 
+                            shapeIdObject[shapeFillColor] = [currentShape.getObjectId()]
+                        }else{
+                            shapeIdObject[shapeFillColor].push(currentShape.getObjectId())
+                        }
+
                     }
 
                 }else if(themeColorType == 'RGB'){
@@ -110,6 +131,13 @@ const getColors = async (dataObject, shapes) => {
                     if(!fill[shapeFillColor]){
                         fill[shapeFillColor] = 1
                         dataObject.fills.push(shapeFillColor);
+
+                        if(!shapeIdObject[shapeFillColor]){ 
+                            shapeIdObject[shapeFillColor] = [currentShape.getObjectId()]
+                        }else{
+                            shapeIdObject[shapeFillColor].push(currentShape.getObjectId())
+                        }
+
                     }
                 }
             }
@@ -127,6 +155,13 @@ const getColors = async (dataObject, shapes) => {
                         if(!font[shapeFontColor]){
                             font[shapeFontColor] = 1
                             dataObject.fonts.push(shapeFontColor);
+
+                            if(!shapeIdObject[shapeFontColor]){ 
+                                shapeIdObject[shapeFontColor] = [currentShape.getObjectId()]
+                            }else{
+                                shapeIdObject[shapeFontColor].push(currentShape.getObjectId())
+                            }
+
                         }
 
                     }else if(fontColorType == 'RGB'){
@@ -135,6 +170,12 @@ const getColors = async (dataObject, shapes) => {
                         if(!font[shapeFontColor]){
                             font[shapeFontColor] = 1
                             dataObject.fonts.push(shapeFontColor);
+
+                            if(!shapeIdObject[shapeFontColor]){ 
+                                shapeIdObject[shapeFontColor] = [currentShape.getObjectId()]
+                            }else{
+                                shapeIdObject[shapeFontColor].push(currentShape.getObjectId())
+                            }
                         }
                     }
                 }
@@ -152,6 +193,13 @@ const getColors = async (dataObject, shapes) => {
                     if(!border[shapeOutlineColor]){
                         border[shapeOutlineColor] = 1
                         dataObject.borders.push(shapeOutlineColor);
+
+
+                        if(!shapeIdObject[shapeOutlineColor]){ 
+                            shapeIdObject[shapeOutlineColor] = [currentShape.getObjectId()]
+                        }else{
+                            shapeIdObject[shapeOutlineColor].push(currentShape.getObjectId())
+                        }
                     }
 
 
@@ -161,6 +209,15 @@ const getColors = async (dataObject, shapes) => {
                     if(!border[shapeOutlineColor]){
                         border[shapeOutlineColor] = 1
                         dataObject.borders.push(shapeOutlineColor);
+                    
+                    
+                        if(!shapeIdObject[shapeOutlineColor]){ 
+                            shapeIdObject[shapeOutlineColor] = [currentShape.getObjectId()]
+                        }else{
+                            shapeIdObject[shapeOutlineColor].push(currentShape.getObjectId())
+                        }
+                    
+                    
                     }
                 }
             }

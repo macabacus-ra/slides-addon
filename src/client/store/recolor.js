@@ -36,6 +36,7 @@ const initialState = {
         borderLineColors: true,
         slideMasters: false
     },
+    showReplaceDialog: false,
 
 }
 
@@ -78,7 +79,42 @@ export const recolorStore = create((set) => ({
 
     })),
 
+    setCurrentColorIndex: (payload) => set(produce((state) => {
+        state.currentColorIndex = payload
+    })),
+
     setList: (payload) => set(produce((state) => {
         state.colorsList = payload
     })),
+
+    setShowReplaceDialog: () => set(produce((state) => {
+        state.showReplaceDialog = !state.showReplaceDialog
+        // state.currentColorIndex = payload
+    })),
+
+    setCurrentColorIndex: (payload) => set(produce((state) => {
+        state.currentColorIndex = payload
+    })),
+
+    updateColorsList: (payload) => set(produce((state) => {
+
+        // adds a color to be replaced
+        // this occurs when the user clicks the checkbox or link, and selects a color. 
+        // the "COLORS LIST" ARRAY is POPULATED in the Colors.tsx useEffect, every time loadColors is called.
+        
+        state.colorsList[payload.index].replace = payload.replaceHex
+        state.colorsList[payload.index].replaceHex = payload.replaceHex
+        state.colorsList[payload.index].replaceRgb = payload.replaceRgb
+        state.replaceCount += 1
+
+    })),
+
+    removeRecolorSelection: (payload) => set(produce((state) => {
+
+        state.colorsList[payload].replace = ''
+        state.colorsList[payload].replaceHex = ''
+        state.colorsList[payload].replaceRgb = ''
+        state.replaceCount -= 1
+    })),
+    
 }))

@@ -29,6 +29,21 @@ const Colors = () => {
     const presentationColorsListRaw = recolorStore((state) => state.presentationColorsListRaw)
     const setList = recolorStore((state) => state.setList)
     const selection = recolorStore((state) => state.selection)
+    const colorNameType = recolorStore((state) => state.colorNameType)
+    const setShowReplaceDialog = recolorStore((state) => state.setShowReplaceDialog)
+    const showReplaceDialog = recolorStore((state) => state.showReplaceDialog)
+    // const setColorNameType = recolorStore((state) => state.setColorNameType)
+    const setCurrentColorIndex = recolorStore((state) => state.setCurrentColorIndex)
+    const removeRecolorSelection = recolorStore((state) => state.removeRecolorSelection)
+
+    const handleReplace = (shapeIndex) => { 
+        setShowReplaceDialog()
+        setCurrentColorIndex(shapeIndex) 
+    }
+
+    const handleUndoReplace = (shapeIndex) => { 
+        removeRecolorSelection(shapeIndex) 
+    }
 
     const handleDragFind = (e, ui) => {
         console.log(e)
@@ -49,10 +64,8 @@ const Colors = () => {
     // useEffect here is to get a list of unique colors from the scope and selection
     // track selection changes from the scope component and filter the colors list based on the selection
     // colorsList should contain unique colors
-    useEffect(() => {       
 
-        
-        
+    useEffect(() => {        
         // from the "server", the colors belonging to a certain selection are already unique(border colors are unique, shape fill colors are unique). 
         // However, accross the 4 selections (fonts, fills, borders, slide masters), we might have duplicate colors.
         // for example, for "selected shapes", red might exist in the fills, border, and fonts. So we need to filter the colors list based on the selection
@@ -79,8 +92,7 @@ const Colors = () => {
             }
             // set the colors list to a javascript "SET" of filtered colors matching the selection (checkboxes)
             // create a unique array of color objects. This is the colors list that will be displayed in the colors component
-            
-
+             
             let uniqueColors = Array.from(new Set( colors ))
 
             let colorsList = []
@@ -142,10 +154,51 @@ const Colors = () => {
                         ( colorsList.map((color, idx) => {
                                 return (
                                     <ListItem  key={idx}>  
-                                        { color.currentColor }
+                                        {
+                                            color.replace ? 
+                                            (
+                                                <CheckItem onClick={() => handleUndoReplace(idx)} width={pane1}>
+                                                    <McbsCheckbox style={mcbsCheckBoxStyle} checked={true}/>
+                                                </CheckItem>
+                                            )
+                                            :
+                                            (
+                                                <CheckItem onClick={() => handleReplace(idx)} width={pane1}>
+                                                    <McbsCheckbox style={mcbsCheckBoxStyle} checked={false}/>
+                                                </CheckItem>
+                                            )
+                                        }
+                                    
+                                    <FindItem width={pane2}>
+                                        <ColorBox color={color.currentColor}></ColorBox>
+                                        { colorNameType === 'hex' ? color.currentColor : color.rgbColor }
+                                    </FindItem>
+                                    <ReplaceItem onClick={() => handleReplace(idx)} width={pane3}>
+                                        {
+                                            color.replace ? (
+                                                <ReplaceWrap>
+                                                    <ColorBox color={color.replace}></ColorBox>
+                                                    <ChooseColorNone>
+                                                        { colorNameType === 'hex' ? color.replaceHex : color.replaceRgb }
+                                                    
+                                                    </ChooseColorNone>
+                                                </ReplaceWrap>
+                                            )
+                                            :
+                                            (
+                                                <ChooseColorNone>Choose Color</ChooseColorNone>
+                                            )
+                                        }
+                                    </ReplaceItem>
                                     </ListItem>
                                 )
-                                })
+
+
+
+
+
+
+                            })
                         )
                     }
                 </List>

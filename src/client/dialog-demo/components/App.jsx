@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Scope from './Scope';
 import Colors from './Colors';
 import { recolorStore } from '../../store/recolor';
+import ReplaceDialog from './ReplaceDialog';
 
 const App = () => {
   const [names, setNames] = useState([]);
@@ -44,7 +45,17 @@ const App = () => {
     console.log('cancel')
   }
   const handleSubmit = async () => {
-    console.log('submit')
+    // const response = await serverFunctions.recolor(currentScope);
+
+    // if(response){ 
+    //   setGoogleResponse( JSON.stringify(response)) 
+    //   setColors(
+    //     {
+    //       colorsData: response,
+    //       scopeData: currentScope,
+    //     }
+    //   )
+    // }
   }
 
 
@@ -97,17 +108,25 @@ const App = () => {
     <RecolorBtns>
 
       <RecolorGroup> 
-        {/* { replaceCount > 0 ?
+        { replaceCount > 0 ?
           <RecolorBtn style={{marginRight: '10px'}} onClick={handleSubmit}>Replace</RecolorBtn>
           :
           <RecolorDisabled style={{marginRight: '10px'}}>Recolor</RecolorDisabled>
-        }               */}
+        }              
         <RecolorBtn onClick={handleCancel}>Close</RecolorBtn>
       </RecolorGroup>
+
+      <span>
+  
+        { googleResponse ? googleResponse : 'nothing' }
+
+      </span>
+
+
     </RecolorBtns>
-      {/* {
+      {
         showReplaceDialog && <ReplaceDialog />
-      } */}
+      }
   </RecolorContainer>
   );
 };
