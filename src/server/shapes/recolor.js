@@ -123,6 +123,12 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
                             shapeIdObject[shapeFillColor].push(currentShape.getObjectId())
                         }
 
+                    }else{
+                        if(!shapeIdObject[shapeFillColor]){ 
+                            shapeIdObject[shapeFillColor] = [currentShape.getObjectId()]
+                        }else{
+                            shapeIdObject[shapeFillColor].push(currentShape.getObjectId())
+                        }
                     }
 
                 }else if(themeColorType == 'RGB'){
@@ -138,6 +144,12 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
                             shapeIdObject[shapeFillColor].push(currentShape.getObjectId())
                         }
 
+                    }else{
+                        if(!shapeIdObject[shapeFillColor]){ 
+                            shapeIdObject[shapeFillColor] = [currentShape.getObjectId()]
+                        }else{
+                            shapeIdObject[shapeFillColor].push(currentShape.getObjectId())
+                        }
                     }
                 }
             }
@@ -162,6 +174,12 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
                                 shapeIdObject[shapeFontColor].push(currentShape.getObjectId())
                             }
 
+                        }else{
+                            if(!shapeIdObject[shapeFontColor]){ 
+                                shapeIdObject[shapeFontColor] = [currentShape.getObjectId()]
+                            }else{
+                                shapeIdObject[shapeFontColor].push(currentShape.getObjectId())
+                            }
                         }
 
                     }else if(fontColorType == 'RGB'){
@@ -176,7 +194,14 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
                             }else{
                                 shapeIdObject[shapeFontColor].push(currentShape.getObjectId())
                             }
+                        }else{
+                            if(!shapeIdObject[shapeFontColor]){ 
+                                shapeIdObject[shapeFontColor] = [currentShape.getObjectId()]
+                            }else{
+                                shapeIdObject[shapeFontColor].push(currentShape.getObjectId())
+                            }
                         }
+
                     }
                 }
             }
@@ -200,6 +225,12 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
                         }else{
                             shapeIdObject[shapeOutlineColor].push(currentShape.getObjectId())
                         }
+                    }else{
+                        if(!shapeIdObject[shapeFontColor]){ 
+                            shapeIdObject[shapeFontColor] = [currentShape.getObjectId()]
+                        }else{
+                            shapeIdObject[shapeFontColor].push(currentShape.getObjectId())
+                        }
                     }
 
 
@@ -218,6 +249,12 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
                         }
                     
                     
+                    }else{
+                        if(!shapeIdObject[shapeOutlineColor]){ 
+                            shapeIdObject[shapeOutlineColor] = [currentShape.getObjectId()]
+                        }else{
+                            shapeIdObject[shapeOutlineColor].push(currentShape.getObjectId())
+                        }
                     }
                 }
             }
@@ -246,3 +283,285 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
   
     return dataObject;
   };
+
+
+
+  export const recolor = async (data) => {
+
+    let startTime = new Date().getTime();
+
+    // scope here matters. If the scope is set to the whole presentation,
+    // then we can optimize the speed by only looping through shapes that contain the colors to be replaced.
+
+    // if the scope is selected "shapes", then we don't need the optimized code. Since the potentiol
+    // performance gain is not worth the extra code complexity.
+    // this is perhaps also the case for "slides" scope, but this hasn't tested it yet.
+
+
+    // get the presentation object
+    let presentation = SlidesApp.getActivePresentation()
+
+    // array of colors that need to be replaced. Each array item is an object with the following properties:
+    // currentColor: color, 
+    // rgbColor: rgbColor,
+    // replace: '',
+    // replaceHex: '',
+    // replaceRgb: '',
+    let replaceArray = data.replaceArray;
+    
+    // current selection of shapes
+    // example: 
+    // selection: {
+    //     fontColors: true,
+    //     fillColors: true,
+    //     borderLineColors: true,
+    //     slideMasters: false
+    // }
+    let selectionObj = data.selection;
+
+    // loop through shape ids and get the shapes, then change the color depending the selection
+
+    let i, j, k;
+    let shapeCountSelected = replaceArray.length;  //these are the color checkboxes. If only 1 checbox is selected, but that color
+    // contains many shapes, then if we must get the length of ALL shapes that container that color, not just the selected shapes.
+    // for example, if 1 checkbox is selected, you might say , ok loop once, but the other shapes will get ignored
+
+
+    let shapeIdsArray = []; // array of shapeId arrays
+    for( j = 0 ; j < shapeCountSelected ; j ++ ){  shapeIdsArray.push(data.shapeIds[replaceArray[j].currentColor])}
+
+    let shapeIdsCount = shapeIdsArray.length;
+    let colorScheme = presentation.getPageElementById(shapeIdsArray[0][0]).getParentPage().getColorScheme()
+
+    for( i = 0 ; i < shapeIdsCount ; i ++ ){
+
+        // given the "current color" index 
+        // find the shape ids that have that color
+
+        //let shapeIdsArray = data.shapeIds[replaceArray[i].currentColor] // this is an array of shape ids that contain the given color.
+        // that way we don't have to loop through all the slides and shapes in the presentation, we already have the shapes needed
+        // for the current color .
+        
+        let currentArray = shapeIdsArray[i]; // container objectids of shapes that contain the current color
+        let currentArrayCount = currentArray.length;
+
+        if(currentArrayCount < 1){ continue; } // if there are no shapeIds associated with the current color, skip to the next color (i++
+
+        // loop through the shape ids and get the shapes
+        for( k = 0 ; k < currentArrayCount ; k++ ){
+            
+            let shape = presentation.getPageElementById(currentArray[k])
+
+            let currentShape;
+            if(shape.getPageElementType() == "SHAPE"){  currentShape = shape.asShape()  } 
+            else if (shape.getPageElementType() == "TABLE") {  currentShape = shape.asTable()    }
+
+            let shapeFillColor, shapeFontColor, shapeOutlineColor;
+
+            // now depending on what is selection (fill, font, border), change the color
+            // change fill color to current color in replaceArray  check for them color
+
+            if(selectionObj.fillColors){
+                if(currentShape.getFill().getSolidFill() !== null) {
+
+                    let gotColor =  currentShape.getFill().getSolidFill().getColor()
+                    let themeColorType = gotColor.getColorType()
+
+                    if(themeColorType == 'THEME'){
+                        let THEMECOLOR = gotColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
+                        shapeFillColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
+                        if(shapeFillColor === replaceArray[i].currentColor){
+                            currentShape.getFill().setSolidFill(replaceArray[i].replaceHex)
+
+                            // 1. ) if a color was replaced we need to update the colors list with the new color
+                            // to give the correct colors back to the dialog, since it remains open after submit button is clicked
+
+                            data.previousFills = data.previousFills.filter( (color) => { 
+                                return color !== shapeFillColor 
+                            })
+                            if(!data.previousFills.includes(replaceArray[i].replaceHex) ){
+                                data.previousFills.push(replaceArray[i].replaceHex)
+                            }
+
+
+                            // 2.) removing this shapeId associated with the old color
+                            data.shapeIds[shapeFillColor] = data.shapeIds[shapeFillColor].filter( (id) => { return id !== currentArray[k] } )
+
+                            // 3.) updating the shapeIds object with the shapeId pushed to the new color array
+
+                            if(!data.shapeIds[replaceArray[i].replaceHex]){
+                                data.shapeIds[replaceArray[i].replaceHex] = [currentArray[k]]
+                            }else{
+                                data.shapeIds[replaceArray[i].replaceHex].push(currentArray[k])
+                            }
+
+                        }
+                    }else if(themeColorType == 'RGB'){
+                        shapeFillColor = gotColor.asRgbColor().asHexString()
+                        if(shapeFillColor === replaceArray[i].currentColor){
+                            currentShape.getFill().setSolidFill(replaceArray[i].replaceHex)
+                            // 1. ) if a color was replaced we need to update the colors list with the new color
+                            // to give the correct colors back to the dialog, since it remains open after submit button is clicked
+
+                            data.previousFills = data.previousFills.filter( (color) => { 
+                                return color !== shapeFillColor 
+                            })
+                            if(!data.previousFills.includes(replaceArray[i].replaceHex) ){
+                                data.previousFills.push(replaceArray[i].replaceHex)
+                            }
+
+                            // 2.) removing this shapeId associated with the old color
+                            data.shapeIds[shapeFillColor] = data.shapeIds[shapeFillColor].filter( (id) => { return id !== currentArray[k] } )
+
+                            // 3.) updating the shapeIds object with the shapeId pushed to the new color array
+
+                            if(!data.shapeIds[replaceArray[i].replaceHex]){
+                                data.shapeIds[replaceArray[i].replaceHex] = [currentArray[k]]
+                            }else{
+                                data.shapeIds[replaceArray[i].replaceHex].push(currentArray[k])
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if(selectionObj.fontColors){
+                //check for text
+                let gotForegroundColor = currentShape.getText().getTextStyle().getForegroundColor()
+                if(gotForegroundColor !== null) {
+                    let fontColorType = gotForegroundColor.getColorType()
+                    if(fontColorType == 'THEME'){
+                        let THEMECOLOR = gotForegroundColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
+                        shapeFontColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
+
+                        if(shapeFontColor === replaceArray[i].currentColor){
+                            currentShape.getText().getTextStyle().setForegroundColor(replaceArray[i].replaceHex)
+
+                            //  1. ) if a color was replaced we need to update the colors list with the new color
+                            data.previousFonts = data.previousFonts.filter( (color) => { 
+                                return color !== shapeFontColor 
+                            })
+                            if(!data.previousFonts.includes(replaceArray[i].replaceHex) ){
+                                data.previousFonts.push(replaceArray[i].replaceHex)
+                            }
+
+
+                            // 2.) removing this shapeId associated with the old color
+                            data.shapeIds[shapeFontColor] = data.shapeIds[shapeFontColor].filter( (id) => { return id !== currentArray[k] } )
+
+                            // 3.) updating the shapeIds object with the shapeId pushed to the new color array
+
+                            if(!data.shapeIds[replaceArray[i].replaceHex]){
+                                data.shapeIds[replaceArray[i].replaceHex] = [currentArray[k]]
+                            }else{
+                                data.shapeIds[replaceArray[i].replaceHex].push(currentArray[k])
+                            }
+                        }
+                    }else if(fontColorType == 'RGB'){
+                        shapeFontColor = gotForegroundColor.asRgbColor().asHexString()
+                        if(shapeFontColor === replaceArray[i].currentColor){
+                            currentShape.getText().getTextStyle().setForegroundColor(replaceArray[i].replaceHex)
+
+                            // 1. ) if a color was replaced we need to update the colors list with the new color
+                            data.previousFonts = data.previousFonts.filter( (color) => { 
+                                return color !== shapeFontColor 
+                            })
+                            if(!data.previousFonts.includes(replaceArray[i].replaceHex) ){
+                                data.previousFonts.push(replaceArray[i].replaceHex)
+                            }
+
+                            // 2.) removing this shapeId associated with the old color
+                            data.shapeIds[shapeFontColor] = data.shapeIds[shapeFontColor].filter( (id) => { return id !== currentArray[k] } )
+
+                            // 3.) updating the shapeIds object with the shapeId pushed to the new color array
+
+                            if(!data.shapeIds[replaceArray[i].replaceHex]){
+                                data.shapeIds[replaceArray[i].replaceHex] = [currentArray[k]]
+                            }else{
+                                data.shapeIds[replaceArray[i].replaceHex].push(currentArray[k])
+                            }
+                            
+                        }
+                    }
+                }
+            }
+            if(selectionObj.borderLineColors){
+                let gotColor = currentShape.getBorder().getLineFill().getSolidFill().getColor()
+                let borderColorType = gotColor.getColorType()
+
+                if(borderColorType == 'THEME'){
+                    let THEMECOLOR = gotColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
+                    shapeOutlineColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
+
+                    if(shapeOutlineColor === replaceArray[i].currentColor){
+                        currentShape.getBorder().getLineFill().setSolidFill(replaceArray[i].replaceHex)
+
+
+                            //  1. ) if a color was replaced we need to update the colors list with the new color
+                            data.previousBorders = data.previousBorders.filter((color)  => { 
+                                return color !== shapeOutlineColor 
+                            })
+                            if(!data.previousBorders.includes(replaceArray[i].replaceHex) ){
+                                data.previousBorders.push(replaceArray[i].replaceHex)
+                            }
+
+
+                            // 2.) removing this shapeId associated with the old color
+                            data.shapeIds[shapeOutlineColor] = data.shapeIds[shapeOutlineColor].filter( (id) => { 
+                                return id !== currentArray[k] 
+                            } )
+
+                            // 3.) updating the shapeIds object with the shapeId pushed to the new color array
+
+                            if(!data.shapeIds[replaceArray[i].replaceHex]){
+                                data.shapeIds[replaceArray[i].replaceHex] = [currentArray[k]]
+                            }else{
+                                data.shapeIds[replaceArray[i].replaceHex].push(currentArray[k])
+                            }
+
+                    }
+
+                }else if(borderColorType == 'RGB'){
+
+                    shapeOutlineColor = gotColor.asRgbColor().asHexString()
+                    if(shapeOutlineColor === replaceArray[i].currentColor){
+                        currentShape.getBorder().getLineFill().setSolidFill(replaceArray[i].replaceHex)
+
+
+                        // 1.) if a color was replaced we need to update the colors list with the new color
+                        data.previousBorders = data.previousBorders.filter((color)  => { 
+                            return color !== shapeOutlineColor 
+                        })
+                        if(!data.previousBorders.includes(replaceArray[i].replaceHex) ){
+                            data.previousBorders.push(replaceArray[i].replaceHex)
+                        }
+
+                        // 2.) removing this shapeId associated with the old color
+                        data.shapeIds[shapeOutlineColor] = data.shapeIds[shapeOutlineColor].filter( (id) => { return id !== currentArray[k] } )
+
+                        // 3.) updating the shapeIds object with the shapeId pushed to the new color array
+                        if(!data.shapeIds[replaceArray[i].replaceHex]){
+                            data.shapeIds[replaceArray[i].replaceHex] = [currentArray[k]]
+                        }else{
+                            data.shapeIds[replaceArray[i].replaceHex].push(currentArray[k])
+                        }
+
+                    }
+                }
+            }
+        }
+
+
+
+        
+    }
+
+    return  {
+        time: new Date().getTime() - startTime,
+        colorsRef: data.shapeIds,
+        borders: data.previousBorders,
+        fills: data.previousFills,
+        fonts: data.previousFonts
+    }
+  }

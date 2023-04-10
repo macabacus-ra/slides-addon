@@ -9,7 +9,7 @@ import ReplaceDialog from './ReplaceDialog';
 
 const App = () => {
   const [names, setNames] = useState([]);
-  const colorList = recolorStore((state) => state.colorList)
+  const colorsList = recolorStore((state) => state.colorsList)
   const replaceCount = recolorStore((state) => state.replaceCount)
   const showReplaceDialog = recolorStore((state) => state.showReplaceDialog)
   const currentScope = recolorStore((state) => state.currentScope)
@@ -45,17 +45,38 @@ const App = () => {
     console.log('cancel')
   }
   const handleSubmit = async () => {
-    // const response = await serverFunctions.recolor(currentScope);
+    // filter the colorslist to only include colors that have a replace color
+    let replaceArray = colorsList.filter((item) => item.replace ) 
 
-    // if(response){ 
-    //   setGoogleResponse( JSON.stringify(response)) 
-    //   setColors(
-    //     {
-    //       colorsData: response,
-    //       scopeData: currentScope,
-    //     }
-    //   )
-    // }
+
+
+
+    let obj = {
+      replaceArray: replaceArray,
+      scope: currentScope,
+      selection: selection,
+      previousFonts: colorsObject.fonts,
+      previousBorders: colorsObject.borders,
+      previousFills: colorsObject.fills,
+      shapeIds: colorsObject.colorsRef 
+    }
+
+    const response = await serverFunctions.recolor( obj );
+
+    // setGoogleResponse(obj)
+
+    
+
+    if(response){ 
+      setGoogleResponse( JSON.stringify(response)) 
+      // setColors(
+      //   {
+      //     colorsData: response,
+      //     scopeData: currentScope,
+      //   }
+      // )
+    }
+
   }
 
 
