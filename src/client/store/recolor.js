@@ -10,6 +10,8 @@ const initialState = {
     recolorArray: [],
     showReplaceDialog: false,
 
+    dataSent: 'dataSent',
+
     colorsArray: [ 
         "#FF0000", "#FFA07A", "#FA8072", "#8DC4DE", "#7FFF00",  "#00FF7F", "#00FF7F", "#ADD8E6", "#008000", "#228B22", "#008B8B", 
         "#00BFFF", "#0000FF", "#0000CD", "#00008B", "#000080", "#4B0082", "#8A2BE2", "#9400D3","#9932CC", "#8B008B", "#800080",
@@ -115,6 +117,10 @@ export const recolorStore = create((set) => ({
         state.colorsList[payload].replaceHex = ''
         state.colorsList[payload].replaceRgb = ''
         state.replaceCount -= 1
+    })),
+
+    setDataSent: (payload) => set(produce((state) => {
+        state.dataSent = payload
     })),
     
 }))

@@ -16,7 +16,8 @@ const App = () => {
   const selection = recolorStore((state) => state.selection)
   const colorsObject = recolorStore((state) => state.colorsObject)
   const setColors = recolorStore((state) => state.setColors)
-
+  const setDataSent = recolorStore((state) => state.setDataSent)
+  const dataSent = recolorStore((state) => state.dataSent)
   const shapeColorsListRaw = recolorStore((state) => state.shapeColorsListRaw)
   const slideColorsListRaw = recolorStore((state) => state.slideColorsListRaw)
   const presentationColorsListRaw = recolorStore((state) => state.presentationColorsListRaw)
@@ -48,7 +49,7 @@ const App = () => {
     // filter the colorslist to only include colors that have a replace color
     let replaceArray = colorsList.filter((item) => item.replace ) 
 
-
+   
 
 
     let obj = {
@@ -61,6 +62,8 @@ const App = () => {
       shapeIds: colorsObject.colorsRef 
     }
 
+    setDataSent(JSON.stringify(obj))
+
     const response = await serverFunctions.recolor( obj );
 
     // setGoogleResponse(obj)
@@ -69,12 +72,12 @@ const App = () => {
 
     if(response){ 
       setGoogleResponse( JSON.stringify(response)) 
-      // setColors(
-      //   {
-      //     colorsData: response,
-      //     scopeData: currentScope,
-      //   }
-      // )
+      setColors(
+        {
+          colorsData: response,
+          scopeData: currentScope,
+        }
+      )
     }
 
   }
@@ -116,7 +119,7 @@ const App = () => {
 
   return (
     <RecolorContainer>
-      <div>Current Scope: { currentScope } </div>
+      <div>Current ScopeX: { currentScope } </div>
       <div style={{marginBottom: '20px'}} onClick={handleGetColors}> Get Colors </div>
 
 
@@ -124,7 +127,7 @@ const App = () => {
 
       <Colors  />
       {/* <div>Response: { googleResponse } </div> */}
-      <div> Colors Object: { colorsObject ? ('yes') : ('nothing') } </div>
+      <div> Colors ObjectZZZ: { colorsObject ? ('yes') : ('nothing') } </div>
 
     <RecolorBtns>
 
@@ -137,17 +140,23 @@ const App = () => {
         <RecolorBtn onClick={handleCancel}>Close</RecolorBtn>
       </RecolorGroup>
 
-      <span>
-  
-        { googleResponse ? googleResponse : 'nothing' }
 
-      </span>
 
 
     </RecolorBtns>
       {
         showReplaceDialog && <ReplaceDialog />
       }
+
+      <div style={{display: 'flex', flexDirection: 'column'}}>
+        <span>
+          { googleResponse ? googleResponse : 'nothing' }
+        </span>
+        <span style={{marginTop: '10px'}}>
+
+          { dataSent }
+        </span>
+      </div>
   </RecolorContainer>
   );
 };
