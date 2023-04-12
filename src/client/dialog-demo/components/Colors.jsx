@@ -29,6 +29,7 @@ const Colors = () => {
     const presentationColorsListRaw = recolorStore((state) => state.presentationColorsListRaw)
     const setList = recolorStore((state) => state.setList)
     const selection = recolorStore((state) => state.selection)
+    const setColorNameType = recolorStore((state) => state.setColorNameType)
     const colorNameType = recolorStore((state) => state.colorNameType)
     const setShowReplaceDialog = recolorStore((state) => state.setShowReplaceDialog)
     const showReplaceDialog = recolorStore((state) => state.showReplaceDialog)
@@ -202,7 +203,25 @@ const Colors = () => {
                         )
                     }
                 </List>
-            </ColorsContainer>  
+            </ColorsContainer>
+            <RecolorBottomActions>
+                <ColorTypeBtnWrap>
+                    <span onClick={() => setColorNameType('rgb')}> 
+                        <McbsRadio style={mcbsRadioStyle} selected={colorNameType==='rgb'} /> 
+                        <label style={{marginLeft: '5px'}} htmlFor='rgb'>RGB</label>
+                    </span>
+
+                    <span onClick={() => setColorNameType('hex')} style={{marginLeft: '12px'}}>
+                        <McbsRadio style={mcbsRadioStyle} selected={colorNameType==='hex'} /> 
+                        <label style={{marginLeft: '5px'}} htmlFor='hex' > HEX </label>
+                    </span>
+                    
+                </ColorTypeBtnWrap>
+                <RefreshButton>
+                    {/* <RefreshOutlinedIcon style={{fontSize: '20px'}} /> */}
+                    <span style={{marginLeft: '5px'}}>Refresh</span> 
+                </RefreshButton>
+            </RecolorBottomActions>
         </RecolorColors>
     )
 }

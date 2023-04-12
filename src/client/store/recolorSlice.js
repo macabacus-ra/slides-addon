@@ -1,5 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+
+
+
+
+
+
+
+
+
+
+//*********************************** */
+
+// redux and redux toolkit are not working in Apps Script
+
+// Using Zustand instead for global state management. ==> './recolor.js'
+
+//*********************************** */
+
+
+
+
+
+
+
+
+
+
+
+
+
 const initialState = {
     // when scope changes, colorsList should be updated with unique available colors.    
     colorsList: null,

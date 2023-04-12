@@ -122,5 +122,9 @@ export const recolorStore = create((set) => ({
     setDataSent: (payload) => set(produce((state) => {
         state.dataSent = payload
     })),
+
+    setColorNameType: (payload) => set(produce((state) => {
+        state.colorNameType = payload
+    })),
     
 }))
