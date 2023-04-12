@@ -68,19 +68,19 @@ const App = () => {
 
     const response = await serverFunctions.recolor2( obj );
 
-    // setGoogleResponse(obj)
+    setGoogleResponse(obj)
 
     
 
-    // if(response){ 
-    //   setGoogleResponse( JSON.stringify(response)) 
-    //   setColors(
-    //     {
-    //       colorsData: response,
-    //       scopeData: currentScope,
-    //     }
-    //   )
-    // }
+    if(response){ 
+      setGoogleResponse( JSON.stringify(response)) 
+      setColors(
+        {
+          colorsData: response.shapeIdsAndElementsObject,
+          scopeData: currentScope,
+        }
+      )
+    }
 
   }
 
@@ -128,7 +128,7 @@ const App = () => {
       <Scope  />
 
       <Colors  /> 
-      
+
       {/* <div>Response: { googleResponse } </div> */}
  
 

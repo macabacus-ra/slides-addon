@@ -623,38 +623,62 @@ const getColors = async (dataObject, shapes, shapeIdObject, shapeIdsAndElementsO
   }
 
   export const recolor2 = async (data) => {
- 
+    const startTime = Date.now();
     let presentation = SlidesApp.getActivePresentation()
+    // let colorScheme = presentation.getPageElementById(shapeIdsArray[0][0]).getParentPage().getColorScheme()
 
     for(let i = 0; i < data.replaceArray.length; i ++){
 
         for (const [key, value] of Object.entries(data.objectIds)) {
     
-            // get current shape
             let currentShape = presentation.getPageElementById(key)
-            // get element type
+            let elementType = currentShape.getPageElementType()
 
             if(value.border === data.replaceArray[i].currentColor  && data.selection.borderLineColors){
 
-                // currentShape.asShape().setLeft(0)
+
+
+
                 currentShape.asShape().getBorder().getLineFill().setSolidFill(data.replaceArray[i].replaceHex)
+
+                //update the respective objectIds key with the new color
+                data.objectIds[key].border = data.replaceArray[i].replaceHex
+
 
             }
             if(value.font === data.replaceArray[i].currentColor  && data.selection.fontColors){
-                // currentShape.asShape().setLeft(0)
+
                 currentShape.asShape().getText().getTextStyle().setForegroundColor(data.replaceArray[i].replaceHex)
 
 
                 //check to make sure font string actually has length;
 
-
+                //update the respective objectIds key with the new color
+                data.objectIds[key].font = data.replaceArray[i].replaceHex
 
             }
             if(value.fill === data.replaceArray[i].currentColor  && data.selection.fillColors){
-                // currentShape.asShape().setLeft(0)
+
+
+
                 currentShape.asShape().getFill().setSolidFill(data.replaceArray[i].replaceHex)
+
+
+
+                //update the respective objectIds key with the new color
+                data.objectIds[key].fill = data.replaceArray[i].replaceHex
 
             }
         }        
     }
+
+
+    let returnObj = {
+        time: new Date().getTime() - startTime,
+        shapeIdsAndElementsObject: data.objectIds,
+    }
+
+
+    return returnObj
+
   }
