@@ -64,6 +64,16 @@ const clientEntrypoints = [
     filename: 'dialog-demo-mui',
     template: './src/client/dialog-demo-mui/index.html',
   },
+  //==========================================================
+  //==========================================================
+  {
+    name: 'CLIENT - Dialog Test',
+    entry: './src/client/dialog-test/index.js',
+    filename: 'dialog-test',
+    template: './src/client/dialog-test/index.html',
+  },
+  //==========================================================
+  //==========================================================
   {
     name: 'CLIENT - Dialog Demo Tailwind CSS',
     entry: './src/client/dialog-demo-tailwindcss/index.js',

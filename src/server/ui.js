@@ -5,7 +5,8 @@ export const onOpen = () => {
     // .addItem('Sheet Editor (Bootstrap)', 'openDialogBootstrap')
     // .addItem('Sheet Editor (MUI)', 'openDialogMUI')
     .addItem('Sheet Editor (Tailwind CSS)', 'openDialogTailwindCSS')
-    .addItem('Open Sidebar', 'openSidebarMain');
+    .addItem('Open Sidebar', 'openSidebarMain')
+    .addItem('Dialog Test', 'openDialogTest');
 
   menu.addToUi();
 };
@@ -29,6 +30,13 @@ export const openDialogMUI = () => {
     .setWidth(600)
     .setHeight(600);
     SlidesApp.getUi().showModalDialog(html, 'Sheet Editor (MUI)');
+};
+
+export const openDialogTest = () => {
+  const html = HtmlService.createHtmlOutputFromFile('dialog-test')
+    .setWidth(600)
+    .setHeight(600);
+    SlidesApp.getUi().showModalDialog(html, 'Dialog Test');
 };
 
 export const openDialogTailwindCSS = () => {
