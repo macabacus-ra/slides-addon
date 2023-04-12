@@ -3,6 +3,8 @@ export const loadColors = async (scope) => {
     let colorsObject;
     const startTime = Date.now();
 
+    let shapeIdsAndElementsObject = {}
+
     let shapeIdObject = {};  // this is a global object that will hold a hex color and all the shapes that have this color. 
     // This is so that, when user clicks recolor, we only have to loop through the shapes that have the selected colors, 
     // and not through every shape on every slide getting data again and checking conditions
@@ -19,7 +21,7 @@ export const loadColors = async (scope) => {
             borders: []
         };
 
-        let result = await getColors(colorsData, shapes, shapeIdObject);
+        let result = await getColors(colorsData, shapes, shapeIdObject, shapeIdsAndElementsObject);
         colorsObject = result;
       }
 
@@ -37,7 +39,7 @@ export const loadColors = async (scope) => {
             for (let i = 0; i < slidesCount; i++) {
                 let shapes = slides[i].getPageElements()
                 if(shapes.length === 0){ continue } ; // if there are no shapes on the slide, skip it 
-                colorsData = await getColors(colorsData, shapes, shapeIdObject);
+                colorsData = await getColors(colorsData, shapes, shapeIdObject, shapeIdsAndElementsObject);
             }
             colorsObject = colorsData;
         }
@@ -56,18 +58,19 @@ export const loadColors = async (scope) => {
             for (let i = 0; i < slidesCount; i++) {
                 let shapes = slides[i].getPageElements()
                 if(shapes.length === 0){ continue } ; // if there are no shapes on the slide, skip it 
-                colorsData = await getColors(colorsData, shapes, shapeIdObject);
+                colorsData = await getColors(colorsData, shapes, shapeIdObject, shapeIdsAndElementsObject);
             }
             
             colorsObject = colorsData;
           }
     colorsObject.colorsRef = shapeIdObject;
     colorsObject.time = Date.now() - startTime;
+    colorsObject.shapeIdsAndElementsObject = shapeIdsAndElementsObject;
     return colorsObject
 };
 
 
-const getColors = async (dataObject, shapes, shapeIdObject) => {
+const getColors = async (dataObject, shapes, shapeIdObject, shapeIdsAndElementsObject) => {
     // this is the format of the incoming object  {
     //   fonts array
     //   fills array
@@ -76,6 +79,8 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
     // we to store all colors that are present in each shape, font and border... This is so that, when user
     // selects colors to replace in a presentation scope, we no longer have to loop through every slide, only 
     // the shapes that have the selected colors.
+
+
 
     let shapesCount = shapes.length
     let fill = dataObject.fills  // empty object to hold and the colors and check uniqueness
@@ -106,6 +111,18 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
                     let THEMECOLOR = gotColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
                     shapeFillColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
 
+
+                    // add shapIdsArray if it doesn't exist
+                    if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
+                        shapeIdsAndElementsObject[currentShape.getObjectId()] = {
+                            fill: shapeFillColor
+                        }
+                    }else{
+                        shapeIdsAndElementsObject[currentShape.getObjectId()].fill = shapeFillColor
+                    }
+
+
+
                     //push to "fills" array here and do checking with object and associative array, faster approach than using array.includes() to check if color already exists
                     if(!fill[shapeFillColor]){
                         fill[shapeFillColor] = 1
@@ -126,6 +143,22 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
                 }else if(themeColorType == 'RGB'){
 
                     shapeFillColor = gotColor.asRgbColor().asHexString()
+
+
+
+                    // add shapIdsArray if it doesn't exist
+                    if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
+                        shapeIdsAndElementsObject[currentShape.getObjectId()] = {
+                            fill: shapeFillColor,
+                            font: null,
+                            border: null
+                        }
+                    }else{
+                        shapeIdsAndElementsObject[currentShape.getObjectId()].fill = shapeFillColor
+                    }
+
+
+
                     if(!fill[shapeFillColor]){
                         fill[shapeFillColor] = 1
                         dataObject.fills.push(shapeFillColor);
@@ -155,6 +188,22 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
                         let THEMECOLOR = gotForegroundColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
                         shapeFontColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
 
+
+                        // 
+                     
+                        if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
+                            shapeIdsAndElementsObject[currentShape.getObjectId()] = {
+                                fill: null,
+                                font: shapeFontColor,
+                                border: null
+                            }
+                        }else{
+                            shapeIdsAndElementsObject[currentShape.getObjectId()].font = shapeFontColor
+                        }
+
+
+
+
                         if(!font[shapeFontColor]){
                             font[shapeFontColor] = 1
                             dataObject.fonts.push(shapeFontColor);
@@ -175,6 +224,21 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
 
                     }else if(fontColorType == 'RGB'){
                         shapeFontColor = gotForegroundColor.asRgbColor().asHexString()
+
+
+
+                        if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
+                            shapeIdsAndElementsObject[currentShape.getObjectId()] = {
+                                fill: null,
+                                font: shapeFontColor,
+                                border: null
+                            }
+                        }else{
+                            shapeIdsAndElementsObject[currentShape.getObjectId()].font = shapeFontColor
+                        }
+
+
+
 
                         if(!font[shapeFontColor]){
                             font[shapeFontColor] = 1
@@ -205,6 +269,21 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
                     let THEMECOLOR = gotColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
                     shapeOutlineColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
 
+
+
+                    
+                    if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
+                        shapeIdsAndElementsObject[currentShape.getObjectId()] = {
+                            fill: null,
+                            font: null,
+                            border: shapeOutlineColor
+                        }
+                    }else{
+                        shapeIdsAndElementsObject[currentShape.getObjectId()].border = shapeOutlineColor
+                    }
+
+
+
                     if(!border[shapeOutlineColor]){
                         border[shapeOutlineColor] = 1
                         dataObject.borders.push(shapeOutlineColor);
@@ -225,6 +304,18 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
 
                 }else if(borderColorType == 'RGB'){
                     shapeOutlineColor = gotColor.asRgbColor().asHexString()
+
+
+                    if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
+                        shapeIdsAndElementsObject[currentShape.getObjectId()] = {
+                            fill: null,
+                            font: null,
+                            border: shapeOutlineColor
+                        }
+                    }else{
+                        shapeIdsAndElementsObject[currentShape.getObjectId()].border = shapeOutlineColor
+                    }
+
 
                     if(!border[shapeOutlineColor]){
                         border[shapeOutlineColor] = 1
@@ -288,13 +379,16 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
     // loop through shape ids and get the shapes, then change the color depending the selection
 
     let i, j, k;
-    let shapeCountSelected = replaceArray.length;  //these are the color checkboxes. If only 1 checbox is selected, but that color
+    let replaceArrayCount = replaceArray.length;  //these are the color checkboxes. If only 1 checbox is selected, but that color
     // contains many shapes, then if we must get the length of ALL shapes that container that color, not just the selected shapes.
     // for example, if 1 checkbox is selected, you might say , ok loop once, but the other shapes will get ignored
 
 
     let shapeIdsArray = []; // array of shapeId arrays
-    for( j = 0 ; j < shapeCountSelected ; j ++ ){  shapeIdsArray.push(data.shapeIds[replaceArray[j].currentColor])}
+
+    for( j = 0 ; j < replaceArrayCount ; j ++ ){  
+        shapeIdsArray.push(data.shapeIds[replaceArray[j].currentColor])
+    }
 
     let shapeIdsCount = shapeIdsArray.length;
     let colorScheme = presentation.getPageElementById(shapeIdsArray[0][0]).getParentPage().getColorScheme()
@@ -318,9 +412,15 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
             
             let shape = presentation.getPageElementById(currentArray[k])
 
+            let elementType = shape.getPageElementType()
+
             let currentShape;
-            if(shape.getPageElementType() == "SHAPE"){  currentShape = shape.asShape()  } 
-            else if (shape.getPageElementType() == "TABLE") {  currentShape = shape.asTable()    }
+
+            if(elementType == "UNSUPPORTED"){  continue;  }
+
+            if(elementType == "SHAPE"){  currentShape = shape.asShape()  } 
+
+            else if (elementType == "TABLE") {  currentShape = shape.asTable()    }
 
             let shapeFillColor, shapeFontColor, shapeOutlineColor;
 
@@ -328,6 +428,7 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
             // change fill color to current color in replaceArray  check for them color
 
             if(selectionObj.fillColors && data.previousFills.length > 0){
+                
                 if(currentShape.getFill().getSolidFill() !== null) {
 
                     let gotColor =  currentShape.getFill().getSolidFill().getColor()
@@ -518,5 +619,42 @@ const getColors = async (dataObject, shapes, shapeIdObject) => {
         borders: data.previousBorders,
         fills: data.previousFills,
         fonts: data.previousFonts
+    }
+  }
+
+  export const recolor2 = async (data) => {
+ 
+    let presentation = SlidesApp.getActivePresentation()
+
+    for(let i = 0; i < data.replaceArray.length; i ++){
+
+        for (const [key, value] of Object.entries(data.objectIds)) {
+    
+            // get current shape
+            let currentShape = presentation.getPageElementById(key)
+            // get element type
+
+            if(value.border === data.replaceArray[i].currentColor  && data.selection.borderLineColors){
+
+                // currentShape.asShape().setLeft(0)
+                currentShape.asShape().getBorder().getLineFill().setSolidFill(data.replaceArray[i].replaceHex)
+
+            }
+            if(value.font === data.replaceArray[i].currentColor  && data.selection.fontColors){
+                // currentShape.asShape().setLeft(0)
+                currentShape.asShape().getText().getTextStyle().setForegroundColor(data.replaceArray[i].replaceHex)
+
+
+                //check to make sure font string actually has length;
+
+
+
+            }
+            if(value.fill === data.replaceArray[i].currentColor  && data.selection.fillColors){
+                // currentShape.asShape().setLeft(0)
+                currentShape.asShape().getFill().setSolidFill(data.replaceArray[i].replaceHex)
+
+            }
+        }        
     }
   }

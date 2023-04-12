@@ -15,6 +15,7 @@ const App = () => {
   const currentScope = recolorStore((state) => state.currentScope)
   const selection = recolorStore((state) => state.selection)
   const colorsObject = recolorStore((state) => state.colorsObject)
+  const shapeIdsObj = recolorStore((state) => state.shapeIdsObj)
   const setColors = recolorStore((state) => state.setColors)
   const setDataSent = recolorStore((state) => state.setDataSent)
   const dataSent = recolorStore((state) => state.dataSent)
@@ -32,10 +33,10 @@ const App = () => {
     const response = await serverFunctions.loadColors(currentScope);
 
     if(response){ 
-      setGoogleResponse( JSON.stringify(response)) 
+      setGoogleResponse( JSON.stringify(response.shapeIdsAndElementsObject)) 
       setColors(
         {
-          colorsData: response,
+          colorsData: response.shapeIdsAndElementsObject,
           scopeData: currentScope,
         }
       )
@@ -56,29 +57,30 @@ const App = () => {
       replaceArray: replaceArray,
       scope: currentScope,
       selection: selection,
-      previousFonts: colorsObject.fonts,
-      previousBorders: colorsObject.borders,
-      previousFills: colorsObject.fills,
-      shapeIds: colorsObject.colorsRef 
+      // previousFonts: colorsObject.fonts,
+      // previousBorders: colorsObject.borders,
+      // previousFills: colorsObject.fills,
+      // shapeIds: colorsObject.colorsRef,
+      objectIds: colorsObject
     }
 
     setDataSent(JSON.stringify(obj))
 
-    const response = await serverFunctions.recolor( obj );
+    const response = await serverFunctions.recolor2( obj );
 
     // setGoogleResponse(obj)
 
     
 
-    if(response){ 
-      setGoogleResponse( JSON.stringify(response)) 
-      setColors(
-        {
-          colorsData: response,
-          scopeData: currentScope,
-        }
-      )
-    }
+    // if(response){ 
+    //   setGoogleResponse( JSON.stringify(response)) 
+    //   setColors(
+    //     {
+    //       colorsData: response,
+    //       scopeData: currentScope,
+    //     }
+    //   )
+    // }
 
   }
 
@@ -125,9 +127,10 @@ const App = () => {
 
       <Scope  />
 
-      <Colors  />
+      <Colors  /> 
+      
       {/* <div>Response: { googleResponse } </div> */}
-      <div> Colors ObjectZZZ: { colorsObject ? ('yes') : ('nothing') } </div>
+ 
 
     <RecolorBtns>
 

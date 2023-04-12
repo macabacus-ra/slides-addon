@@ -10,7 +10,7 @@ import {
 
 import { getSheetsData, addSheet, deleteSheet, setActiveSheet } from './sheets';
 
-import { loadColors, recolor } from './shapes/recolor.js'
+import { loadColors, recolor, recolor2 } from './shapes/recolor.js'
 
 // Public functions must be exported as named exports
 export {
@@ -23,6 +23,7 @@ export {
   openSidebarMain,
   getSheetsData,
   loadColors,
+  recolor2,
   recolor,
   addSheet,
   deleteSheet,

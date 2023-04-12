@@ -80,14 +80,14 @@ const Colors = () => {
         if(colorsObject){
 
             for (const [key, value] of Object.entries(colorsObject)) {
-                if( key === 'fonts' && selection.fontColors && Array.isArray(value) && value.length > 0){
-                    colors.push(...value)
+                if( value.font && selection.fontColors){
+                    colors.push(value.font)
                 }
-                if( key === 'fills' && selection.fillColors && Array.isArray(value) && value.length > 0){
-                    colors.push(...value)
+                if( value.fill && selection.fillColors ){
+                    colors.push(value.fill)
                 }
-                if( key === 'borders' && selection.borderLineColors && Array.isArray(value) && value.length > 0){
-                    colors.push(...value)
+                if(value.border && selection.borderLineColors){
+                    colors.push(value.border)
                 }
             }
             // set the colors list to a javascript "SET" of filtered colors matching the selection (checkboxes)

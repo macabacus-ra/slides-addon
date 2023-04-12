@@ -9,7 +9,7 @@ const initialState = {
     colorsObject: null,
     recolorArray: [],
     showReplaceDialog: false,
-
+    shapeIdsObj: null,
     dataSent: 'dataSent',
 
     colorsArray: [ 
