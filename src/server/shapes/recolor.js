@@ -181,14 +181,35 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                 let shapeId = currentShape.getObjectId()
                 isTable = true
 
-                if(!shapeIdsAndElementsObject[shapeId]){
-                    shapeIdsAndElementsObject[shapeId] = {
-                        fill: null,
-                        font: null,
-                        border: null,
-                        isTable: isTable
+                let cols = currentShape.getNumColumns()
+                let rows = currentShape.getNumRows()
+
+                let colorsArray = []
+
+                for(let i = 0; i < rows; i++){
+
+                    let rowArray = []
+
+                    for(let j = 0; j < cols; j++){
+
+                        // currentShape.getCell(i, j).getFill()
+
+                        rowArray.push({
+                            fill: null,
+                            font: null,
+                        })
+
                     }
+
+                    colorsArray.push(rowArray)
                 }
+
+ 
+                shapeIdsAndElementsObject[shapeId] = {
+                        isTable: isTable,
+                        colors: colorsArray
+                    }
+                
                 // else{
                 //     shapeIdsAndElementsObject[currentShape.getObjectId()].border = shapeOutlineColor
                 // }
