@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { serverFunctions } from '../../utils/serverFunctions';
-// This is a wrapper for google.script.run that lets us use promises.
+import { serverFunctions } from '../../utils/serverFunctions'; // This is a wrapper for google.script.run that lets us use promises.
 import styled from 'styled-components';
 import { recolorStore } from '../../store/recolor';
 import Draggable from "react-draggable";
-// import { 
-//     setList, 
-//     resetColors, 
-//     setShowReplaceDialog, 
-//     setCurrentColorIndex, 
-//     removeRecolorSelection,
-//     setColorNameType
-// } from '../../../features/colorsSlice'
 import McbsRadio from './icons/McbsRadio';
 import McbsCheckbox from './icons/McbsCheckbox';
 import { hexToRgb } from '../../utils/colorConvert'
@@ -60,41 +51,38 @@ const Colors = () => {
         }) )
     }
 
-
     // useEffect here is to get a list of unique colors from the scope and selection
     // track selection changes from the scope component and filter the colors list based on the selection
     // colorsList should contain unique colors
-
     useEffect(() => {        
         // from the "server", the colors belonging to a certain selection are already unique(border colors are unique, shape fill colors are unique). 
         // However, accross the 4 selections (fonts, fills, borders, slide masters), we might have duplicate colors.
         // for example, for "selected shapes", red might exist in the fills, border, and fonts. So we need to filter the colors list based on the selection
-        
         // we could have filtered this in the "server" but upon a user selecting/deselecting a checkbox, we would have had to re call the "server" to get the colors
         // again based on the scope and the combination of the selection checkboxes. This would have been a lot of calls to the "server" and would have been slow to retrieve.
         // so instead, we filter the colors list here in the client. This is a lot faster and more efficient.
         // and the updated take place immediately upon a user selecting/deselecting a checkbox/checkboxes.
-
         let colors = [] 
 
         if(colorsObject){
-
             for (const [key, value] of Object.entries(colorsObject)) {
-                if( value.font && selection.fontColors){
-                    colors.push(value.font)
+                if(value.isTable){
+                    for(let i = 0; i < value.colors.length; i++){
+                        for(let j = 0; j < value.colors[i].length; j++){
+                            if(value.colors[i][j].fill && selection.fillColors){ colors.push(value.colors[i][j].fill) }
+                            if(value.colors[i][j].border && selection.borderLineColors){ colors.push(value.colors[i][j].border) }
+                        }
+                    }
                 }
-                if( value.fill && selection.fillColors ){
-                    colors.push(value.fill)
-                }
-                if(value.border && selection.borderLineColors){
-                    colors.push(value.border)
-                }
+
+                if( value.font && selection.fontColors){ colors.push(value.font) }
+                if( value.fill && selection.fillColors ){ colors.push(value.fill) }
+                if(value.border && selection.borderLineColors){ colors.push(value.border) }
             }
             // set the colors list to a javascript "SET" of filtered colors matching the selection (checkboxes)
             // create a unique array of color objects. This is the colors list that will be displayed in the colors component
              
             let uniqueColors = Array.from(new Set( colors ))
-
             let colorsList = []
             //loop through colors setting creating an object with the current color and an empty replace color
             //which will be set by the user when they click on a color box

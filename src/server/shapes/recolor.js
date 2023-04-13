@@ -1,4 +1,3 @@
-
 export const loadColors = async (scope) => {
     const startTime = Date.now(); // for testing performance
     let presentation = SlidesApp.getActivePresentation()
@@ -68,72 +67,79 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
 
             if(shapes[k].getPageElementType() == "SHAPE"){ 
                 currentShape = shapes[k].asShape()  
+
+                let shapeId = currentShape.getObjectId()
+                
                 if(currentShape.getFill().getSolidFill() !== null) {
                     // if it has a fill, we need to check if it is a theme color or not! Very important!
                     let gotColor =  currentShape.getFill().getSolidFill().getColor()
-                    let themeColorType = gotColor.getColorType()
+                    let colorType = gotColor.getColorType()
 
-                    if(themeColorType == 'THEME'){
+                    if(colorType == 'THEME'){
                         let THEMECOLOR = gotColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
                         shapeFillColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
 
                         // add shapIdsArray if it doesn't exist
-                        if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
-                            shapeIdsAndElementsObject[currentShape.getObjectId()] = {
+                        if(!shapeIdsAndElementsObject[shapeId]){
+                            shapeIdsAndElementsObject[shapeId] = {
                                 fill: shapeFillColor
                             }
                         }else{
-                            shapeIdsAndElementsObject[currentShape.getObjectId()].fill = shapeFillColor
+                            shapeIdsAndElementsObject[shapeId].fill = shapeFillColor
                         }
 
-                    }else if(themeColorType == 'RGB'){
+                    }else if(colorType == 'RGB'){
                         shapeFillColor = gotColor.asRgbColor().asHexString()
                         // add shapIdsArray if it doesn't exist
-                        if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
-                            shapeIdsAndElementsObject[currentShape.getObjectId()] = {
+                        if(!shapeIdsAndElementsObject[shapeId]){
+                            shapeIdsAndElementsObject[shapeId] = {
                                 fill: shapeFillColor,
                                 font: null,
                                 border: null,
                                 isTable: isTable
                             }
                         }else{
-                            shapeIdsAndElementsObject[currentShape.getObjectId()].fill = shapeFillColor
+                            shapeIdsAndElementsObject[shapeId].fill = shapeFillColor
                         }
                     }
                 }
 
-                if(currentShape.getText() !== null){
-                    let gotForegroundColor = currentShape.getText().getTextStyle().getForegroundColor()
-
-                    if(gotForegroundColor !== null) {
-                        let fontColorType = gotForegroundColor.getColorType()
-                        if(fontColorType == 'THEME'){
-                            let THEMECOLOR = gotForegroundColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
-                            shapeFontColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
-                            
-                            if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
-                                shapeIdsAndElementsObject[currentShape.getObjectId()] = {
-                                    fill: null,
-                                    font: shapeFontColor,
-                                    border: null,
-                                    isTable: isTable
+                let shapeText = currentShape.getText()
+                if(shapeText !== null){
+                    let text = shapeText.asRenderedString()
+                    let str = text.replace(/\s+/g, '');
+                    if(str.length > 0){ 
+                        let gotForegroundColor = shapeText.getTextStyle().getForegroundColor()
+                        if(gotForegroundColor !== null) {
+                            let fontColorType = gotForegroundColor.getColorType()
+                            if(fontColorType == 'THEME'){
+                                let THEMECOLOR = gotForegroundColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
+                                shapeFontColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
+                                
+                                if(!shapeIdsAndElementsObject[shapeId]){
+                                    shapeIdsAndElementsObject[shapeId] = {
+                                        fill: null,
+                                        font: shapeFontColor,
+                                        border: null,
+                                        isTable: isTable
+                                    }
+                                }else{
+                                    shapeIdsAndElementsObject[shapeId].font = shapeFontColor
                                 }
-                            }else{
-                                shapeIdsAndElementsObject[currentShape.getObjectId()].font = shapeFontColor
-                            }
 
-                        }else if(fontColorType == 'RGB'){
-                            shapeFontColor = gotForegroundColor.asRgbColor().asHexString()
+                            }else if(fontColorType == 'RGB'){
+                                shapeFontColor = gotForegroundColor.asRgbColor().asHexString()
 
-                            if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
-                                shapeIdsAndElementsObject[currentShape.getObjectId()] = {
-                                    fill: null,
-                                    font: shapeFontColor,
-                                    border: null,
-                                    isTable: isTable
+                                if(!shapeIdsAndElementsObject[shapeId]){
+                                    shapeIdsAndElementsObject[shapeId] = {
+                                        fill: null,
+                                        font: shapeFontColor,
+                                        border: null,
+                                        isTable: isTable
+                                    }
+                                }else{
+                                    shapeIdsAndElementsObject[shapeId].font = shapeFontColor
                                 }
-                            }else{
-                                shapeIdsAndElementsObject[currentShape.getObjectId()].font = shapeFontColor
                             }
                         }
                     }
@@ -148,29 +154,29 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                         let THEMECOLOR = gotColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
                         shapeOutlineColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
                         
-                        if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
-                            shapeIdsAndElementsObject[currentShape.getObjectId()] = {
+                        if(!shapeIdsAndElementsObject[shapeId]){
+                            shapeIdsAndElementsObject[shapeId] = {
                                 fill: null,
                                 font: null,
                                 border: shapeOutlineColor,
                                 isTable: isTable
                             }
                         }else{
-                            shapeIdsAndElementsObject[currentShape.getObjectId()].border = shapeOutlineColor
+                            shapeIdsAndElementsObject[shapeId].border = shapeOutlineColor
                         }
                     }else if(borderColorType == 'RGB'){
                         shapeOutlineColor = gotColor.asRgbColor().asHexString()
 
 
-                        if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
-                            shapeIdsAndElementsObject[currentShape.getObjectId()] = {
+                        if(!shapeIdsAndElementsObject[shapeId]){
+                            shapeIdsAndElementsObject[shapeId] = {
                                 fill: null,
                                 font: null,
                                 border: shapeOutlineColor,
                                 isTable: isTable
                             }
                         }else{
-                            shapeIdsAndElementsObject[currentShape.getObjectId()].border = shapeOutlineColor
+                            shapeIdsAndElementsObject[shapeId].border = shapeOutlineColor
                         }
                     }
 
@@ -180,81 +186,61 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                 currentShape = shapes[k].asTable()
                 let shapeId = currentShape.getObjectId()
                 isTable = true
-
                 let cols = currentShape.getNumColumns()
                 let rows = currentShape.getNumRows()
-
                 let colorsArray = []
 
                 for(let i = 0; i < rows; i++){
-
                     let rowArray = []
-
                     for(let j = 0; j < cols; j++){
 
                         // currentShape.getCell(i, j).getFill()
+                        let cell = currentShape.getCell(i, j)
+                        let tableCellFillColor, tableCellFontColor;
 
+                        if(cell.getFill().getSolidFill()) {
+                            let gotColor =  cell.getFill().getSolidFill().getColor()
+                            let colorType = gotColor.getColorType()
+                            if(colorType == 'THEME'){
+                                let THEMECOLOR = gotColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
+                                tableCellFillColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
+                            }else if(colorType == 'RGB'){
+                                tableCellFillColor = gotColor.asRgbColor().asHexString()
+                            }
+                        }else{
+                            tableCellFillColor = null
+                        }
+                        if(!cell.getText().isEmtpy){
+                            let gotForegroundColor = cell.getText().getTextStyle().getForegroundColor()
+                            if(gotForegroundColor !== null) {
+                                let fontColorType = gotForegroundColor.getColorType()
+                                if(fontColorType == 'THEME'){
+                                    let THEMECOLOR = gotForegroundColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
+                                    tableCellFontColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
+                                }else if(fontColorType == 'RGB'){
+                                    tableCellFontColor = gotForegroundColor.asRgbColor().asHexString()
+                                }
+                            }
+                        }else{
+                            tableCellFontColor = null
+                        }
                         rowArray.push({
-                            fill: null,
-                            font: null,
+                            fill: tableCellFillColor ?? false,
+                            font: tableCellFontColor ?? false,
                         })
-
-                    }
-
+                    }   
                     colorsArray.push(rowArray)
                 }
-
- 
                 shapeIdsAndElementsObject[shapeId] = {
-                        isTable: isTable,
-                        colors: colorsArray
-                    }
-                
-                // else{
-                //     shapeIdsAndElementsObject[currentShape.getObjectId()].border = shapeOutlineColor
-                // }
-
-
-
-
-                // if(currentShape.getFill().getSolidFill() !== null) {
-                    // if it has a fill, we need to check if it is a theme color or not! Very important!
-                    // let gotColor =  currentShape.getFill().getSolidFill().getColor()
-                    
-                //     let themeColorType = gotColor.getColorType()
-                //     if(themeColorType == 'THEME'){
-                //         let THEMECOLOR = gotColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
-                //         shapeFillColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
-
-                //         // add shapIdsArray if it doesn't exist
-                //         if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
-                //             shapeIdsAndElementsObject[currentShape.getObjectId()] = {
-                //                 fill: shapeFillColor
-                //             }
-                //         }else{
-                //             shapeIdsAndElementsObject[currentShape.getObjectId()].fill = shapeFillColor
-                //         }
-
-                //     }else if(themeColorType == 'RGB'){
-                //         shapeFillColor = gotColor.asRgbColor().asHexString()
-                //         // add shapIdsArray if it doesn't exist
-                //         if(!shapeIdsAndElementsObject[currentShape.getObjectId()]){
-                //             shapeIdsAndElementsObject[currentShape.getObjectId()] = {
-                //                 fill: shapeFillColor,
-                //                 font: null,
-                //                 border: null
-                //             }
-                //         }else{
-                //             shapeIdsAndElementsObject[currentShape.getObjectId()].fill = shapeFillColor
-                //         }
-                //     }
-                // }
+                    isTable: isTable,
+                    colors: colorsArray
+                }
             } 
         } else {
             continue;
         }
     }
-  };
+};
 
 
   export const recolor = async (data) => {
@@ -563,11 +549,30 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                     currentShape.asShape().getFill().setSolidFill(data.replaceArray[i].replaceHex)
                     data.objectIds[key].fill = data.replaceArray[i].replaceHex
                 }
-            }else if(elementType == "TABLE"){
+            }else if(elementType == "TABLE"  && data.objectIds[key].isTable){
                 // we cannot get border colors from tables so we will only look for fill and font colors
+                // loop through the table cells 
+                let currentTable = currentShape.asTable()
+                for(let r = 0; r < value.colors.length ; r ++){
+                    for(let c = 0 ; c < value.colors[r].length; c ++){
+                        if(value.colors[r][c].font === data.replaceArray[i].currentColor  && data.selection.fontColors){
 
-                // 
+                            let gotText = currentTable.getCell(r, c).getText()
+                            let text = gotText.asRenderedString()
+                            let str = text.replace(/\s+/g, '');
 
+                            if(str.length > 0){
+                                gotText.getTextStyle().setForegroundColor(data.replaceArray[i].replaceHex)
+                                data.objectIds[key].colors[r][c].font = data.replaceArray[i].replaceHex
+                            }
+                        }
+
+                        if(value.colors[r][c].fill === data.replaceArray[i].currentColor  && data.selection.fillColors){
+                            currentShape.asTable().getCell(r, c).getFill().setSolidFill(data.replaceArray[i].replaceHex)
+                            data.objectIds[key].colors[r][c].fill = data.replaceArray[i].replaceHex
+                        }
+                    }
+                }
             }
         }        
     }

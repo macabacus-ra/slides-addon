@@ -2,11 +2,12 @@ import { create } from 'zustand'
 import produce from "immer";
 
 const initialState = {
-    currentScope: 'shapes',
+    currentScope: 'presentation',
     colors: 0,
     colorsList: null,
     currentColorIndex: null,
     colorsObject: null,
+    colorsArray: [], // associative array of colors / hashmap
     recolorArray: [],
     showReplaceDialog: false,
     shapeIdsObj: null,

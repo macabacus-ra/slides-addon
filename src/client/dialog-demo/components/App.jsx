@@ -124,7 +124,7 @@ const App = () => {
           { replaceCount > 0 ?
             <RecolorBtn style={{marginRight: '10px'}} onClick={handleSubmit}>Replace</RecolorBtn>
             :
-            <RecolorDisabled style={{marginRight: '10px'}}>Recolor</RecolorDisabled>
+            <RecolorDisabled style={{marginRight: '10px'}}>RecolorXX</RecolorDisabled>
           }              
           <RecolorBtn onClick={handleCancel}>Close</RecolorBtn>
         </RecolorGroup>
