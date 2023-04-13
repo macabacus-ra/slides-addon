@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import produce from "immer";
 
 const initialState = {
+    isLoading: false,
+    isRecoloring: false,
     currentScope: 'presentation',
     colors: 0,
     colorsList: null,
@@ -46,10 +48,7 @@ const initialState = {
 export const recolorStore = create((set) => ({
     ...initialState,
 
-    setScope: (payload) => set(produce((state) => {
-        state.currentScope = payload
-    })),
-
+    setScope: (payload) => set(produce((state) => {  state.currentScope = payload })),
     setSelection: (payload) => set(produce((state) => {
         state.selection = {
             ...state.selection,
@@ -57,17 +56,12 @@ export const recolorStore = create((set) => ({
         }
     })),
 
-    resetCount : () => set(produce((state) => {
-        state.replaceCount = 0
-    })),
-
+    resetCount : () => set(produce((state) => { state.replaceCount = 0 })),
     increase: () => set(produce((state) => { state.colors += 1 })),
     decrease: () => set(produce((state) => { state.colors -= 1 })),
-    
     reset: () => set((state) => (initialState)),
 
     setColors: (payload) => set(produce((state) => {
-
         state.colorsObject = payload.colorsData
 
         if(!state.shapeColorsListRaw && payload.scopeData === 'shapes') {
@@ -82,29 +76,15 @@ export const recolorStore = create((set) => ({
 
     })),
 
-    setCurrentColorIndex: (payload) => set(produce((state) => {
-        state.currentColorIndex = payload
-    })),
-
-    setList: (payload) => set(produce((state) => {
-        state.colorsList = payload
-    })),
-
-    setShowReplaceDialog: () => set(produce((state) => {
-        state.showReplaceDialog = !state.showReplaceDialog
-        // state.currentColorIndex = payload
-    })),
-
-    setCurrentColorIndex: (payload) => set(produce((state) => {
-        state.currentColorIndex = payload
-    })),
+    setCurrentColorIndex: (payload) => set(produce((state) => {  state.currentColorIndex = payload })),
+    setList: (payload) => set(produce((state) => { state.colorsList = payload  })),
+    setShowReplaceDialog: () => set(produce((state) => { state.showReplaceDialog = !state.showReplaceDialog })),
+    setCurrentColorIndex: (payload) => set(produce((state) => {state.currentColorIndex = payload })),
 
     updateColorsList: (payload) => set(produce((state) => {
-
         // adds a color to be replaced
         // this occurs when the user clicks the checkbox or link, and selects a color. 
         // the "COLORS LIST" ARRAY is POPULATED in the Colors.tsx useEffect, every time loadColors is called.
-        
         state.colorsList[payload.index].replace = payload.replaceHex
         state.colorsList[payload.index].replaceHex = payload.replaceHex
         state.colorsList[payload.index].replaceRgb = payload.replaceRgb
@@ -113,15 +93,14 @@ export const recolorStore = create((set) => ({
     })),
 
     removeRecolorSelection: (payload) => set(produce((state) => {
-
         state.colorsList[payload].replace = ''
         state.colorsList[payload].replaceHex = ''
         state.colorsList[payload].replaceRgb = ''
         state.replaceCount -= 1
     })),
 
-    setDataSent: (payload) => set(produce((state) => {
-        state.dataSent = payload
-    })),
-    
+    setDataSent: (payload) => set(produce((state) => { state.dataSent = payload })),
+    setColorNameType: (payload) => set(produce((state) => { state.colorNameType = payload })),
+    setIsLoading: (payload) => set(produce((state) => { state.isLoading = payload })),
+    setIsRecoloring: (payload) => set(produce((state) => { state.isRecoloring = payload })),
 }))

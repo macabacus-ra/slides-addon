@@ -22,6 +22,10 @@ const App = () => {
   const shapeColorsListRaw = recolorStore((state) => state.shapeColorsListRaw)
   const slideColorsListRaw = recolorStore((state) => state.slideColorsListRaw)
   const presentationColorsListRaw = recolorStore((state) => state.presentationColorsListRaw)
+  const isLoading = recolorStore((state) => state.isLoading)
+  const setIsLoading = recolorStore((state) => state.setIsLoading)
+  const isRecoloring = recolorStore((state) => state.isRecoloring)
+  const setIsRecoloring = recolorStore((state) => state.setIsRecoloring)
 
   const [googleResponse, setGoogleResponse] = useState('nothing yet')
   
@@ -29,6 +33,7 @@ const App = () => {
 
   const handleGetColors = async () => {
     // setScope(value)
+    setIsLoading(true)
 
     const response = await serverFunctions.loadColors(currentScope);
 
@@ -40,6 +45,7 @@ const App = () => {
           scopeData: currentScope,
         }
       )
+      setIsLoading(false)
     }
   }
 
@@ -50,7 +56,8 @@ const App = () => {
     // filter the colorslist to only include colors that have a replace color
     let replaceArray = colorsList.filter((item) => item.replace ) 
 
-   
+    
+
 
 
     let obj = {
@@ -120,25 +127,23 @@ const App = () => {
       <Scope  />
       <Colors  /> 
       <RecolorBtns>
-        <RecolorGroup> 
+
           { replaceCount > 0 ?
             <RecolorBtn style={{marginRight: '10px'}} onClick={handleSubmit}>Replace</RecolorBtn>
             :
-            <RecolorDisabled style={{marginRight: '10px'}}>RecolorXX</RecolorDisabled>
+            <RecolorDisabled style={{marginRight: '10px'}}>Recolor</RecolorDisabled>
           }              
           <RecolorBtn onClick={handleCancel}>Close</RecolorBtn>
-        </RecolorGroup>
+
       </RecolorBtns>
       {  showReplaceDialog && <ReplaceDialog /> }
 
-      <div style={{display: 'flex', flexDirection: 'column'}}>
-        <span>
-          { googleResponse ? googleResponse : 'nothing' }
-        </span>
-        <span style={{marginTop: '10px'}}>
-          { dataSent }
-        </span>
-      </div>
+      {/* below is for testing */}
+      {/* <div style={{display: 'flex', flexDirection: 'column'}}>
+        <span> { googleResponse ? googleResponse : 'nothing' } </span>
+        <span style={{marginTop: '10px'}}> { dataSent } </span>
+      </div> */}
+      
     </RecolorContainer>
   );
 };
@@ -147,7 +152,7 @@ export default App;
 
 
 const RecolorContainer = styled.div`
-  background-color: var(--recolorBackgrondColor);
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -158,27 +163,25 @@ const RecolorBtns = styled.div`
   display: flex;
   margin-top: 20px;
   flex-direction: row;
-  justify-content: space-between;
   width: 100%;
-`
-
-const RecolorGroup = styled.div`
-  display: flex;
-  flex-direction: row;
+  font-size: 13px;
+  font-family: 'Arial', 'Helvetica',  sans-serif;
+  color: #636363;
+  justify-content: flex-end;
 `
 
 const RecolorBtn = styled.button`
-    padding: 2px 20px;
+    padding: 5px 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
     border: 1px solid var(--recolorLineColor);
-    color: var(--recolorBtnFont);
+    color: #636363;
     border-radius: 4px;
     background-color: #fcfcfc;
 ` 
 const RecolorDisabled = styled.div`
-    padding: 2px 20px;
+    padding: 5px 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -188,29 +191,4 @@ const RecolorDisabled = styled.div`
     background-color: #fcfcfc;
     pointer-events: none;
 ` 
-
-const RecolorUndoBtn = styled.button`
-    padding: 3px 12px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    border: 1px solid var(--recolorLineColor);
-    color: var(--recolorBtnFont);
-    border-radius: 4px;
-    background-color: #fcfcfc;
-
-`
-
-const RecolorUndoBtnDisabled = styled.div`
-    padding: 6px 12px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    border: 1px solid var(--recolorLineColor);
-    color: #bebebe;
-    border-radius: 4px;
-    background-color: #fcfcfc;
-    pointer-events: none;
-
-`
 

@@ -4,6 +4,8 @@ import styled from 'styled-components'
 import Draggable from "react-draggable";
 import { recolorStore } from '../../store/recolor';
 import ReplaceDialogColorBox from "./ReplaceDialogColorBox";
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+// import Logo from './icons/logo.jpg'
 
 const ReplaceDialog = () => {
 
@@ -21,15 +23,12 @@ const ReplaceDialog = () => {
         >
         <ReplaceDialogBackDrop>
             <DialogContainer>
-
                 <DragTop id="drag">
                     <DTLeft>
-                        {/* <img alt='logo' src={require('../logo.jpg')}/> */}
+                        {/* <img alt='logo' src={require(Logo)}/>  */}
                         <span style={{marginLeft: '7px'}}>Replace Color</span>
                     </DTLeft>
-                    <DTRight onClick={() => setShowReplaceDialog()}>
-                        Close
-                    </DTRight>
+                    <DTRight onClick={() => setShowReplaceDialog()}> < CloseOutlinedIcon /> </DTRight>
                 </DragTop>
 
                 <ReplaceDialogColorBox /> 

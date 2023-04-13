@@ -1,4 +1,11 @@
 export const loadColors = async (scope) => {
+
+
+    // for slide masters we can use a code splitting technique. 
+    // on load, slidemasters can be deselected. Then if a user clicks then we looks for the slidemasters and then 
+    // simply add those shapeIds to the object.
+    
+
     const startTime = Date.now(); // for testing performance
     let presentation = SlidesApp.getActivePresentation()
     let shapeIdsAndElementsObject = {}

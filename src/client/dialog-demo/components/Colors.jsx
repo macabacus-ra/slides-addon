@@ -6,6 +6,8 @@ import Draggable from "react-draggable";
 import McbsRadio from './icons/McbsRadio';
 import McbsCheckbox from './icons/McbsCheckbox';
 import { hexToRgb } from '../../utils/colorConvert'
+import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
+import RingLoader from '../../utils/loader/RingLoader';
 
 const Colors = () => {
     const mcbsRadioStyle = {  selectedSize: '6px', selectedBorderSize: '3px', selectedBorderColor: '#2cac7c', deselectedSize: '10px', deselectedBorderColor: '#b3b3b3', deselectedBorderSize: '1px', backgroundColor: 'white' }
@@ -20,12 +22,15 @@ const Colors = () => {
     const presentationColorsListRaw = recolorStore((state) => state.presentationColorsListRaw)
     const setList = recolorStore((state) => state.setList)
     const selection = recolorStore((state) => state.selection)
-    const colorNameType = recolorStore((state) => state.colorNameType)
     const setShowReplaceDialog = recolorStore((state) => state.setShowReplaceDialog)
     const showReplaceDialog = recolorStore((state) => state.showReplaceDialog)
-    // const setColorNameType = recolorStore((state) => state.setColorNameType)
     const setCurrentColorIndex = recolorStore((state) => state.setCurrentColorIndex)
     const removeRecolorSelection = recolorStore((state) => state.removeRecolorSelection)
+    const setColorNameType = recolorStore((state) => state.setColorNameType)
+    const colorNameType = recolorStore((state) => state.colorNameType)
+    const isLoading = recolorStore((state) => state.isLoading)
+    const isRecoloring = recolorStore((state) => state.isRecoloring)
+    const setIsRecoloring = recolorStore((state) => state.setIsRecoloring)
 
     const handleReplace = (shapeIndex) => { 
         setShowReplaceDialog()
@@ -34,6 +39,10 @@ const Colors = () => {
 
     const handleUndoReplace = (shapeIndex) => { 
         removeRecolorSelection(shapeIndex) 
+    }
+
+    const handleRefresh = () => {
+        //serverFunctions.getColors(currentScope)
     }
 
     const handleDragFind = (e, ui) => {
@@ -75,8 +84,8 @@ const Colors = () => {
                     }
                 }
 
-                if( value.font && selection.fontColors){ colors.push(value.font) }
-                if( value.fill && selection.fillColors ){ colors.push(value.fill) }
+                if(value.font && selection.fontColors){ colors.push(value.font) }
+                if(value.fill && selection.fillColors ){ colors.push(value.fill) }
                 if(value.border && selection.borderLineColors){ colors.push(value.border) }
             }
             // set the colors list to a javascript "SET" of filtered colors matching the selection (checkboxes)
@@ -95,7 +104,7 @@ const Colors = () => {
                             rgbColor: rgbColor,
                             replace: '',
                             replaceHex: '',
-                            replaceRgb: '',
+                            replaceRgb: '', 
                         }) 
                     }
                 )
@@ -128,69 +137,79 @@ const Colors = () => {
 
                     <PaneReplace width={pane3}> <span>Replace</span></PaneReplace>
                 </PaneTop>
-
                 <List>
-
-                     {/* {   currentScope === 'slides' && slideColorsListRaw ? 
-                        ( <div> SlidesRaw:  { JSON.stringify(slideColorsListRaw)} </div> ) 
-                        : currentScope === 'shapes' && shapeColorsListRaw ? 
-                        ( <div> ShapesRaw:  { JSON.stringify(shapeColorsListRaw) } </div> ) 
-                        : currentScope === 'presentation' && presentationColorsListRaw && 
-                        ( <div> PresentationRaw:  { JSON.stringify(presentationColorsListRaw) } </div> )
-                     } */}
-                    { colorsList && colorsList.length > 0 && 
-                        ( colorsList.map((color, idx) => {
-                                return (
-                                    <ListItem  key={idx}>  
-                                        {
-                                            color.replace ? 
-                                            (
-                                                <CheckItem onClick={() => handleUndoReplace(idx)} width={pane1}>
-                                                    <McbsCheckbox style={mcbsCheckBoxStyle} checked={true}/>
-                                                </CheckItem>
-                                            )
-                                            :
-                                            (
-                                                <CheckItem onClick={() => handleReplace(idx)} width={pane1}>
-                                                    <McbsCheckbox style={mcbsCheckBoxStyle} checked={false}/>
-                                                </CheckItem>
-                                            )
-                                        }
-                                    
-                                    <FindItem width={pane2}>
-                                        <ColorBox color={color.currentColor}></ColorBox>
-                                        { colorNameType === 'hex' ? color.currentColor : color.rgbColor }
-                                    </FindItem>
-                                    <ReplaceItem onClick={() => handleReplace(idx)} width={pane3}>
-                                        {
-                                            color.replace ? (
-                                                <ReplaceWrap>
-                                                    <ColorBox color={color.replace}></ColorBox>
-                                                    <ChooseColorNone>
-                                                        { colorNameType === 'hex' ? color.replaceHex : color.replaceRgb }
-                                                    
-                                                    </ChooseColorNone>
-                                                </ReplaceWrap>
-                                            )
-                                            :
-                                            (
-                                                <ChooseColorNone>Choose Color</ChooseColorNone>
-                                            )
-                                        }
-                                    </ReplaceItem>
-                                    </ListItem>
-                                )
-
-
-
-
-
-
-                            })
+                    { isLoading ? 
+                        ( <LoaderContainer> <RingLoader /> </LoaderContainer> )
+                        :
+                        (
+                            colorsList && colorsList.length > 0 && 
+                            ( colorsList.map((color, idx) => {
+                                    return (
+                                        <ListItem  key={idx}>  
+                                            {
+                                                color.replace ? 
+                                                (
+                                                    <CheckItem onClick={() => handleUndoReplace(idx)} width={pane1}>
+                                                        <McbsCheckbox style={mcbsCheckBoxStyle} checked={true}/>
+                                                    </CheckItem>
+                                                )
+                                                :
+                                                (
+                                                    <CheckItem onClick={() => handleReplace(idx)} width={pane1}>
+                                                        <McbsCheckbox style={mcbsCheckBoxStyle} checked={false}/>
+                                                    </CheckItem>
+                                                )
+                                            }
+                                        
+                                        <FindItem width={pane2}>
+                                            <ColorBox color={color.currentColor}></ColorBox>
+                                            { colorNameType === 'hex' ? color.currentColor : color.rgbColor }
+                                        </FindItem>
+                                        <ReplaceItem onClick={() => handleReplace(idx)} width={pane3}>
+                                            {
+                                                color.replace ? (
+                                                    <ReplaceWrap>
+                                                        <ColorBox color={color.replace}></ColorBox>
+                                                        <ChooseColorNone>
+                                                            { colorNameType === 'hex' ? color.replaceHex : color.replaceRgb }
+                                                        
+                                                        </ChooseColorNone>
+                                                    </ReplaceWrap>
+                                                )
+                                                :
+                                                (
+                                                    <ChooseColorNone>Choose Color</ChooseColorNone>
+                                                )
+                                            }
+                                        </ReplaceItem>
+                                        </ListItem>
+                                    )
+                                })
+                            )
                         )
                     }
                 </List>
             </ColorsContainer>  
+            <RecolorBottomActions>
+            <ColorTypeBtnWrap>
+                <span onClick={() => setColorNameType('rgb')}>
+                    <McbsRadio style={mcbsRadioStyle} selected={colorNameType==='rgb'} /> 
+                    <label style={{marginLeft: '5px'}} htmlFor='rgb'>RGB</label>
+                </span>
+
+                <span onClick={() => setColorNameType('hex')} style={{marginLeft: '12px'}}>
+                    <McbsRadio style={mcbsRadioStyle} selected={colorNameType==='hex'} /> 
+                    <label style={{marginLeft: '5px'}} htmlFor='hex' > HEX </label>
+                </span>
+                
+            </ColorTypeBtnWrap>
+            <RefreshButton onClick={handleRefresh} >
+                <RefreshOutlinedIcon style={{fontSize: '20px'}} />
+                <span style={{marginLeft: '5px'}}>Refresh</span> 
+            </RefreshButton>
+        </RecolorBottomActions>
+
+
         </RecolorColors>
     )
 }
@@ -199,7 +218,13 @@ const Colors = () => {
 export default Colors
 
 
-
+const LoaderContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+`
 
 const RecolorColors = styled.div`
     display: flex;
@@ -239,6 +264,8 @@ const PaneTop = styled.div`
     justify-content: flex-start;
     width: 100%;
     align-items: center;
+    font-size: 13px;
+    color: var(--recolorHeadingColor);
 `
 const PaneCheck = styled.div`
     width: ${props => props.width}px;
@@ -247,6 +274,7 @@ const PaneCheck = styled.div`
     justify-content: flex-start;
     align-items: flex-start;
     position: relative;
+    font-size: 13px;
     &:hover{ background-color: white; }
     span{ visibility: hidden; }
 `
@@ -260,6 +288,7 @@ const PaneFind = styled.div`
     width: ${props => props.width}px;
     border-right: 1px solid rgb(199, 199, 199);
     position: relative;
+    font-size: 13px;
     &:hover{ background-color: white; }
 `
 
@@ -326,6 +355,7 @@ const FindItem = styled.div`
 `
 const ReplaceItem = styled.div`
     width: ${props => props.width}px; 
+    font-size: 13px;
 `
 
 const ColorBox = styled.div`

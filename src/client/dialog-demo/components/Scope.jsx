@@ -138,6 +138,7 @@ const IncludeSlideMasters = styled.div`
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+    font-size: 13px;
     label{
         margin-left: 5px;
     }

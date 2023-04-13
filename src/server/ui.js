@@ -13,8 +13,8 @@ export const onOpen = () => {
 
 export const openDialog = () => {
   const html = HtmlService.createHtmlOutputFromFile('dialog-demo')
-    .setWidth(800)
-    .setHeight(800);
+    .setWidth(450)
+    .setHeight(600);
     SlidesApp.getUi().showModalDialog(html, 'Recolor');
 };
 
