@@ -33,7 +33,7 @@ const App = () => {
     const response = await serverFunctions.loadColors(currentScope);
 
     if(response){ 
-      setGoogleResponse( JSON.stringify(response.shapeIdsAndElementsObject)) 
+      setGoogleResponse( JSON.stringify(response)) 
       setColors(
         {
           colorsData: response.shapeIdsAndElementsObject,
@@ -57,10 +57,6 @@ const App = () => {
       replaceArray: replaceArray,
       scope: currentScope,
       selection: selection,
-      // previousFonts: colorsObject.fonts,
-      // previousBorders: colorsObject.borders,
-      // previousFills: colorsObject.fills,
-      // shapeIds: colorsObject.colorsRef,
       objectIds: colorsObject
     }
 
@@ -121,46 +117,29 @@ const App = () => {
 
   return (
     <RecolorContainer>
-      <div>Current ScopeX: { currentScope } </div>
-      <div style={{marginBottom: '20px'}} onClick={handleGetColors}> Get Colors </div>
-
-
       <Scope  />
-
       <Colors  /> 
-
-      {/* <div>Response: { googleResponse } </div> */}
- 
-
-    <RecolorBtns>
-
-      <RecolorGroup> 
-        { replaceCount > 0 ?
-          <RecolorBtn style={{marginRight: '10px'}} onClick={handleSubmit}>Replace</RecolorBtn>
-          :
-          <RecolorDisabled style={{marginRight: '10px'}}>Recolor</RecolorDisabled>
-        }              
-        <RecolorBtn onClick={handleCancel}>Close</RecolorBtn>
-      </RecolorGroup>
-
-
-
-
-    </RecolorBtns>
-      {
-        showReplaceDialog && <ReplaceDialog />
-      }
+      <RecolorBtns>
+        <RecolorGroup> 
+          { replaceCount > 0 ?
+            <RecolorBtn style={{marginRight: '10px'}} onClick={handleSubmit}>Replace</RecolorBtn>
+            :
+            <RecolorDisabled style={{marginRight: '10px'}}>Recolor</RecolorDisabled>
+          }              
+          <RecolorBtn onClick={handleCancel}>Close</RecolorBtn>
+        </RecolorGroup>
+      </RecolorBtns>
+      {  showReplaceDialog && <ReplaceDialog /> }
 
       <div style={{display: 'flex', flexDirection: 'column'}}>
         <span>
           { googleResponse ? googleResponse : 'nothing' }
         </span>
         <span style={{marginTop: '10px'}}>
-
           { dataSent }
         </span>
       </div>
-  </RecolorContainer>
+    </RecolorContainer>
   );
 };
 
