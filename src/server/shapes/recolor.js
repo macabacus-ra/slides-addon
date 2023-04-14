@@ -103,7 +103,8 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                                 fill: shapeFillColor,
                                 font: null,
                                 border: null,
-                                isTable: isTable
+                                isTable: isTable,
+                                isSM: false
                             }
                         }else{
                             shapeIdsAndElementsObject[shapeId].fill = shapeFillColor
@@ -128,7 +129,8 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                                         fill: null,
                                         font: shapeFontColor,
                                         border: null,
-                                        isTable: isTable
+                                        isTable: isTable,
+                                        isSM: false
                                     }
                                 }else{
                                     shapeIdsAndElementsObject[shapeId].font = shapeFontColor
@@ -142,7 +144,8 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                                         fill: null,
                                         font: shapeFontColor,
                                         border: null,
-                                        isTable: isTable
+                                        isTable: isTable,
+                                        isSM: false
                                     }
                                 }else{
                                     shapeIdsAndElementsObject[shapeId].font = shapeFontColor
@@ -166,7 +169,8 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                                 fill: null,
                                 font: null,
                                 border: shapeOutlineColor,
-                                isTable: isTable
+                                isTable: isTable,
+                                isSM: false
                             }
                         }else{
                             shapeIdsAndElementsObject[shapeId].border = shapeOutlineColor
@@ -180,7 +184,8 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                                 fill: null,
                                 font: null,
                                 border: shapeOutlineColor,
-                                isTable: isTable
+                                isTable: isTable,
+                                isSM: false
                             }
                         }else{
                             shapeIdsAndElementsObject[shapeId].border = shapeOutlineColor
@@ -253,6 +258,7 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                 }
                 shapeIdsAndElementsObject[shapeId] = {
                     isTable: isTable,
+                    isSM: false,
                     colors: colorsArray
                 }
             } 
@@ -604,3 +610,52 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
 
     return returnObj
   }
+
+
+export const loadSlideMasterColors = async (colorsObject) => {
+    // let presentation = SlidesApp.getActivePresentation()
+    // let masters = presentation.getSlideMasters()
+
+    // masters.forEach((master, index) => {
+        
+
+    //     let shapes = master.getShapes()
+    //     shapes.forEach((shape, index) => {
+            
+    //         let shapeId = shape.getObjectId()
+    //         let gotColor =  shape.getFill().getSolidFill().getColor()
+    //         let colorType = gotColor.getColorType()
+
+    //         if(colorType == 'THEME'){
+    //             // add shapIdsArray if it doesn't exist
+    //             if(!colorsObject[shapeId]){
+    //                 colorsObject[shapeId] = { fill: '#FF0000' }
+    //             }else{
+    //                 colorsObject[shapeId].fill = '#FF0000'
+    //             }
+    //         }
+    //         if(colorType == 'RGB'){
+    //             // add shapIdsArray if it doesn't exist
+    //             if(!colorsObject[shapeId]){
+    //                 colorsObject[shapeId] = { fill: '#FF0000' }
+    //             }else{
+    //                 colorsObject[shapeId].fill = '#FF0000'
+    //             }
+    //         }
+    //     })
+    // });
+
+    colorsObject["slidemasterID"] = {
+        isSM: true,
+        isTable: false,
+        fill: '#FF0000',
+        border: '#ff1919',
+        font: '#FF3232'
+    }
+
+    return  {
+        colorsObject: colorsObject
+    }
+
+
+}

@@ -15,6 +15,7 @@ const initialState = {
     shapeIdsObj: null,
     dataSent: 'dataSent',
     
+    slideMastersResponse: '',
 
     colorsArray: [ 
         "#FF0000", "#FFA07A", "#FA8072", "#8DC4DE", "#7FFF00",  "#00FF7F", "#00FF7F", "#ADD8E6", "#008000", "#228B22", "#008B8B", 
@@ -67,6 +68,7 @@ export const recolorStore = create((set) => ({
 
         if(!state.shapeColorsListRaw && payload.scopeData === 'shapes') {
             state.shapeColorsListRaw = payload.colorsData
+
         } else if(!state.slideColorsListRaw && payload.scopeData === 'slides') {
             state.slideColorsListRaw = payload.colorsData
 
@@ -102,4 +104,9 @@ export const recolorStore = create((set) => ({
     setColorNameType: (payload) => set(produce((state) => { state.colorNameType = payload })),
     setIsLoading: (payload) => set(produce((state) => { state.isLoading = payload })),
     setIsRecoloring: (payload) => set(produce((state) => { state.isRecoloring = payload })),
+
+    setSlideMastersResponse: (payload) => set(produce((state) => { 
+        state.slideMastersResponse = payload 
+    })),
+
 }))

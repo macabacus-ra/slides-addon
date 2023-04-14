@@ -27,6 +27,8 @@ const App = () => {
   const isRecoloring = recolorStore((state) => state.isRecoloring)
   const setIsRecoloring = recolorStore((state) => state.setIsRecoloring)
 
+  const slideMastersResponse = recolorStore((state) => state.slideMastersResponse)
+
   const [googleResponse, setGoogleResponse] = useState('nothing yet')
   
   const setScope = recolorStore((state) => state.setScope)
@@ -89,6 +91,9 @@ const App = () => {
 
 
   useEffect(() => {
+
+    //onMount, and on currentScope change
+
     if(currentScope === 'shapes' && shapeColorsListRaw ){
         setColors(
           {
@@ -139,10 +144,10 @@ const App = () => {
       {  showReplaceDialog && <ReplaceDialog /> }
 
       {/* below is for testing */}
-      {/* <div style={{display: 'flex', flexDirection: 'column'}}>
-        <span> Load { googleResponse ? googleResponse : 'nothing' } </span>
-        <span style={{marginTop: '10px'}}> { dataSent } </span>
-      </div> */}
+      <div style={{display: 'flex', flexDirection: 'column'}}>
+        <span> SlideMasters:  { slideMastersResponse } </span>
+        {/* <span style={{marginTop: '10px'}}> { dataSent } </span> */}
+      </div>
       
 
     </RecolorContainer>

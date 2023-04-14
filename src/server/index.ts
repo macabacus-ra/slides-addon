@@ -10,7 +10,7 @@ import {
 
 import { getSheetsData, addSheet, deleteSheet, setActiveSheet } from './sheets';
 
-import { loadColors, recolor, recolor2 } from './shapes/recolor.js'
+import { loadColors, recolor, recolor2, loadSlideMasterColors } from './shapes/recolor.js'
 
 // Public functions must be exported as named exports
 export {
@@ -25,6 +25,7 @@ export {
   loadColors,
   recolor2,
   recolor,
+  loadSlideMasterColors,
   addSheet,
   deleteSheet,
   setActiveSheet,

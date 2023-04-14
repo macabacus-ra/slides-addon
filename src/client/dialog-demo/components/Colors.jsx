@@ -82,11 +82,21 @@ const Colors = () => {
                             if(value.colors[i][j].font && selection.fontColors){ colors.push(value.colors[i][j].font) }
                         }
                     }
+                }else if(value.isSM && selection.slideMasters){
+ 
+                    //this shape is from a slide master
+                    // if(value.font && selection.fontColors){ colors.push(value.font) }
+                    // if(value.fill && selection.fillColors ){ colors.push(value.fill) }
+                    // if(value.border && selection.borderLineColors){ colors.push(value.border) }                        
+                    
+                    colors.push("#FF0000")
+                
+                }else{
+                    if(value.font && selection.fontColors){ colors.push(value.font) }
+                    if(value.fill && selection.fillColors ){ colors.push(value.fill) }
+                    if(value.border && selection.borderLineColors){ colors.push(value.border) }
                 }
 
-                if(value.font && selection.fontColors){ colors.push(value.font) }
-                if(value.fill && selection.fillColors ){ colors.push(value.fill) }
-                if(value.border && selection.borderLineColors){ colors.push(value.border) }
             }
             // set the colors list to a javascript "SET" of filtered colors matching the selection (checkboxes)
             // create a unique array of color objects. This is the colors list that will be displayed in the colors component

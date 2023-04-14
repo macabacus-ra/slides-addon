@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import McbsRadio from './icons/McbsRadio';
 import McbsCheckbox from './icons/McbsCheckbox';
 import { recolorStore } from '../../store/recolor';
+import { serverFunctions } from '../../utils/serverFunctions';
 
 const Scope = () => {
     const mcbsRadioStyle = { selectedSize: '6px', selectedBorderSize: '3px', selectedBorderColor: '#2cac7c', deselectedSize: '10px', deselectedBorderColor: 'rgba(220, 220, 220, 0.349)', deselectedBorderSize: '1px', backgroundColor: 'white' }
@@ -13,6 +14,8 @@ const Scope = () => {
     const resetCount = recolorStore((state) => state.resetCount)
     const setSelection = recolorStore((state) => state.setSelection)
     const selection = recolorStore((state) => state.selection)
+    const colorsObject = recolorStore((state) => state.colorsObject)
+    const setSlideMastersResponse = recolorStore((state) => state.setSlideMastersResponse)
 
     function handleScope(value) { // radio buttons
         if(currentScope !== value){
@@ -26,6 +29,30 @@ const Scope = () => {
         resetCount()
     }
 
+    const handleSlideMasters = async () => {
+        // resetCount()
+        // call a new function to get the slide masters
+        // on the server side, get the slide masters and get the colors with their shape ids.
+        // on the client side, filter these colors for uniqueness and add them to the colors list.
+        setSelection('slideMasters')
+        const response = await serverFunctions.loadSlideMasterColors( colorsObject ) ;
+
+        if(response){
+
+            setSlideMastersResponse( JSON.stringify(response) )
+
+            setColors(
+                {
+                    colorsData: response.colorsObject,
+                    scopeData: currentScope
+                }
+            )
+
+        }else{
+            setSlideMastersResponse( 'No response from server' )
+        }
+
+    }
 
     return (
         <RecolorScope>
@@ -70,7 +97,7 @@ const Scope = () => {
                         </InputItem>
                     </SelectionBtns>
                 </LayoutRadioAndSelection>
-                <IncludeSlideMasters onClick={() => handleColorSelection('slideMasters')}>
+                <IncludeSlideMasters onClick={handleSlideMasters}>
                     <McbsCheckbox checked={selection.slideMasters} style={mcbsCheckBoxStyle} />
                     <label htmlFor='slideMasters'>Include Slide Master layouts</label>
                 </IncludeSlideMasters>
