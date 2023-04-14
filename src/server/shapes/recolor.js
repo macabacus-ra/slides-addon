@@ -4,7 +4,7 @@ export const loadColors = async (scope) => {
     // for slide masters we can use a code splitting technique. 
     // on load, slidemasters can be deselected. Then if a user clicks then we looks for the slidemasters and then 
     // simply add those shapeIds to the object.
-    
+
 
     const startTime = Date.now(); // for testing performance
     let presentation = SlidesApp.getActivePresentation()
@@ -23,28 +23,27 @@ export const loadColors = async (scope) => {
             getColors(shapes, shapeIdsAndElementsObject);
         }
     } else if (scope === 'slides') {
-        let pageRange = presentation.getSelection().getPageElementRange()
 
-        if(!pageRange){
-            let slide = presentation.getSelection().getCurrentPage() // select the first slide if no slide is selected, otherwise fails
+        let slides = presentation.getSelection().getCurrentPage() // select the first slide if no slide is selected, otherwise fails
             
-            let shapes = slide.getPageElements()
-            if(shapes.length < 1){ 
-                return {
-                    Time: Date.now() - startTime,
-                    shapeIdsAndElementsObject: {}
-                }
-            }else{ getColors(shapes, shapeIdsAndElementsObject); }
-        }else{
-            // bug here we can not get the pages that are individually selected 
+        let shapes = slides.getPageElements()
+
+        if(shapes.length === 0){ 
             return {
                 Time: Date.now() - startTime,
                 shapeIdsAndElementsObject: {}
             }
+        }else{ 
+            getColors(shapes, shapeIdsAndElementsObject); 
         }
+
     } else if (scope === 'presentation') {
+
+
         let slides = presentation.getSlides()
         let slidesCount = slides.length
+
+
         for (let i = 0; i < slidesCount; i++) {
             let shapes = slides[i].getPageElements()
             if(shapes.length === 0){ continue } ; // if there are no shapes on the slide, skip it 
@@ -83,6 +82,7 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                     let colorType = gotColor.getColorType()
 
                     if(colorType == 'THEME'){
+
                         let THEMECOLOR = gotColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
                         shapeFillColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
 
@@ -217,23 +217,36 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
                         }else{
                             tableCellFillColor = null
                         }
-                        if(!cell.getText().isEmtpy){
-                            let gotForegroundColor = cell.getText().getTextStyle().getForegroundColor()
-                            if(gotForegroundColor !== null) {
-                                let fontColorType = gotForegroundColor.getColorType()
-                                if(fontColorType == 'THEME'){
-                                    let THEMECOLOR = gotForegroundColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
-                                    tableCellFontColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
-                                }else if(fontColorType == 'RGB'){
-                                    tableCellFontColor = gotForegroundColor.asRgbColor().asHexString()
+
+
+                        let cellText = cell.getText()
+
+                        if(!cellText.isEmpty()){
+
+                            let text = cellText.asRenderedString()
+                            let str = text.replace(/\s+/g, '');
+                            if(str.length > 0){
+                            
+                                
+                                let gotForegroundColor = cellText.getTextStyle().getForegroundColor()
+                                if(gotForegroundColor !== null) {
+                                    let fontColorType = gotForegroundColor.getColorType()
+                                    if(fontColorType == 'THEME'){
+                                        let THEMECOLOR = gotForegroundColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
+                                        tableCellFontColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
+                                    }else if(fontColorType == 'RGB'){
+                                        tableCellFontColor = gotForegroundColor.asRgbColor().asHexString()
+                                    }
                                 }
+                            }else{
+                                tableCellFontColor = null
                             }
                         }else{
                             tableCellFontColor = null
                         }
                         rowArray.push({
-                            fill: tableCellFillColor ?? false,
-                            font: tableCellFontColor ?? false,
+                            fill: tableCellFillColor,
+                            font: tableCellFontColor,
                         })
                     }   
                     colorsArray.push(rowArray)

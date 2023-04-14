@@ -8,11 +8,10 @@ const ReplaceDialogColorBoxItem = ({index, backgroundColor }) => {
     const rgbColor = hexToRgb(backgroundColor)
     const colorBoxItemRefIndex = index
     const [showTooltip, setShowTooltip] = useState(false)
-
     const currentColorIndex = recolorStore((state) => state.currentColorIndex)
     const setShowReplaceDialog = recolorStore((state) => state.setShowReplaceDialog)
     const updateColorsList = recolorStore((state) => state.updateColorsList)
-
+    
     const handleItemClick = () => { 
         updateColorsList( 
             {

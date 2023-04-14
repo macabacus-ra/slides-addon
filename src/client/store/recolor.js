@@ -14,6 +14,7 @@ const initialState = {
     showReplaceDialog: false,
     shapeIdsObj: null,
     dataSent: 'dataSent',
+    
 
     colorsArray: [ 
         "#FF0000", "#FFA07A", "#FA8072", "#8DC4DE", "#7FFF00",  "#00FF7F", "#00FF7F", "#ADD8E6", "#008000", "#228B22", "#008B8B", 
@@ -66,14 +67,12 @@ export const recolorStore = create((set) => ({
 
         if(!state.shapeColorsListRaw && payload.scopeData === 'shapes') {
             state.shapeColorsListRaw = payload.colorsData
-
         } else if(!state.slideColorsListRaw && payload.scopeData === 'slides') {
             state.slideColorsListRaw = payload.colorsData
 
         } else if(!state.presentationColorsListRaw && payload.scopeData === 'presentation') {
             state.presentationColorsListRaw = payload.colorsData
         }   
-
     })),
 
     setCurrentColorIndex: (payload) => set(produce((state) => {  state.currentColorIndex = payload })),

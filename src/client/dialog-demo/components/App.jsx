@@ -140,19 +140,18 @@ const App = () => {
 
       {/* below is for testing */}
       {/* <div style={{display: 'flex', flexDirection: 'column'}}>
-        <span> { googleResponse ? googleResponse : 'nothing' } </span>
+        <span> Load { googleResponse ? googleResponse : 'nothing' } </span>
         <span style={{marginTop: '10px'}}> { dataSent } </span>
       </div> */}
       
+
     </RecolorContainer>
   );
 };
-
 export default App;
 
 
 const RecolorContainer = styled.div`
-
   display: flex;
   flex-direction: column;
   justify-content: space-between;

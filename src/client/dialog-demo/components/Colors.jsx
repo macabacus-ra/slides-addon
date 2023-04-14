@@ -79,7 +79,7 @@ const Colors = () => {
                     for(let i = 0; i < value.colors.length; i++){
                         for(let j = 0; j < value.colors[i].length; j++){
                             if(value.colors[i][j].fill && selection.fillColors){ colors.push(value.colors[i][j].fill) }
-                            if(value.colors[i][j].border && selection.borderLineColors){ colors.push(value.colors[i][j].border) }
+                            if(value.colors[i][j].font && selection.fontColors){ colors.push(value.colors[i][j].font) }
                         }
                     }
                 }
