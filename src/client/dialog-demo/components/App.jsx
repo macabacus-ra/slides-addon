@@ -26,7 +26,8 @@ const App = () => {
   const setIsLoading = recolorStore((state) => state.setIsLoading)
   const isRecoloring = recolorStore((state) => state.isRecoloring)
   const setIsRecoloring = recolorStore((state) => state.setIsRecoloring)
-
+  const [initialResponse, setInitialResponse] = useState('nothing yet')
+  
   const slideMastersResponse = recolorStore((state) => state.slideMastersResponse)
 
   const [googleResponse, setGoogleResponse] = useState('nothing yet')
@@ -40,7 +41,7 @@ const App = () => {
     const response = await serverFunctions.loadColors(currentScope);
 
     if(response){ 
-      setGoogleResponse( JSON.stringify(response)) 
+      setInitialResponse( JSON.stringify(response.shapeIdsAndElementsObject)) 
       setColors(
         {
           colorsData: response.shapeIdsAndElementsObject,
@@ -145,7 +146,10 @@ const App = () => {
 
       {/* below is for testing */}
       <div style={{display: 'flex', flexDirection: 'column'}}>
-        <span> SlideMasters:  { slideMastersResponse } </span>
+        <span>Initial Response: {initialResponse} </span>
+        
+        <span style={{marginTop: '10px'}}> SlideMasters:  { slideMastersResponse } </span>
+        
         {/* <span style={{marginTop: '10px'}}> { dataSent } </span> */}
       </div>
       

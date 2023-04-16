@@ -645,11 +645,11 @@ export const loadSlideMasterColors = async (colorsObject) => {
     //     })
     // });
 
-    colorsObject["slidemasterID"] = {
+    colorsObject["sm2e0SM361bd_1_4"] = {
         isSM: true,
         isTable: false,
         fill: '#FF0000',
-        border: '#ff1919',
+        border: null,
         font: '#FF3232'
     }
 

@@ -16,6 +16,9 @@ const Scope = () => {
     const selection = recolorStore((state) => state.selection)
     const colorsObject = recolorStore((state) => state.colorsObject)
     const setSlideMastersResponse = recolorStore((state) => state.setSlideMastersResponse)
+    const slideMastersResponse = recolorStore((state) => state.slideMastersResponse)
+    const setColors = recolorStore((state) => state.setColors)
+
 
     function handleScope(value) { // radio buttons
         if(currentScope !== value){
@@ -30,28 +33,30 @@ const Scope = () => {
     }
 
     const handleSlideMasters = async () => {
-        // resetCount()
+        resetCount()
         // call a new function to get the slide masters
         // on the server side, get the slide masters and get the colors with their shape ids.
         // on the client side, filter these colors for uniqueness and add them to the colors list.
         setSelection('slideMasters')
-        const response = await serverFunctions.loadSlideMasterColors( colorsObject ) ;
 
-        if(response){
+        if(!slideMastersResponse){
+            const response = await serverFunctions.loadSlideMasterColors( colorsObject ) ;
 
-            setSlideMastersResponse( JSON.stringify(response) )
+            if(response){
 
-            setColors(
-                {
-                    colorsData: response.colorsObject,
-                    scopeData: currentScope
-                }
-            )
+                setSlideMastersResponse( JSON.stringify(response.colorsObject) )
 
-        }else{
-            setSlideMastersResponse( 'No response from server' )
+                setColors(
+                    {
+                        colorsData: response.colorsObject,
+                        scopeData: currentScope
+                    }
+                )
+
+            }else{
+                setSlideMastersResponse( 'No response from server' )
+            }
         }
-
     }
 
     return (

@@ -36,13 +36,15 @@ const initialState = {
 
     hasChanged: false,
 
-    // ** might have issues here in Apps Script without implementing IMMER **
+ 
     selection: {
         fontColors: true,
         fillColors: true,
         borderLineColors: true,
         slideMasters: false
     },
+
+
     showReplaceDialog: false,
 
 }
