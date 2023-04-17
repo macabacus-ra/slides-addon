@@ -28,6 +28,7 @@ const initialState = {
     shapeColorsListRaw: null,
     slideColorsListRaw: null,
     presentationColorsListRaw: null,
+    colorsPlusSlideMasterRaw: null,
 
     colorNameType: 'hex', //default
     isRefreshed: false,
@@ -77,6 +78,16 @@ export const recolorStore = create((set) => ({
         } else if(!state.presentationColorsListRaw && payload.scopeData === 'presentation') {
             state.presentationColorsListRaw = payload.colorsData
         }   
+    })),
+
+    addSlideMasters: (payload) => set(produce((state) => {
+
+        state.colorsObject = payload.colorsData
+
+        if(!state.colorsPlusSlideMasterRaw) {
+            state.colorsPlusSlideMasterRaw = payload.colorsData
+        }
+
     })),
 
     setCurrentColorIndex: (payload) => set(produce((state) => {  state.currentColorIndex = payload })),

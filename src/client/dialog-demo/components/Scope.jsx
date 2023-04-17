@@ -18,9 +18,18 @@ const Scope = () => {
     const setSlideMastersResponse = recolorStore((state) => state.setSlideMastersResponse)
     const slideMastersResponse = recolorStore((state) => state.slideMastersResponse)
     const setColors = recolorStore((state) => state.setColors)
-
+    const addSlideMasters = recolorStore((state) => state.addSlideMasters)
+    const colorsPlusSlideMasterRaw = recolorStore((state) => state.colorsPlusSlideMasters)
 
     function handleScope(value) { // radio buttons
+
+        if(selection.slideMasters){
+            ///
+            // remove slidemasters
+            setSelection('slideMasters')
+            ///
+        }
+
         if(currentScope !== value){
             setScope(value)
             resetCount()            
@@ -33,30 +42,51 @@ const Scope = () => {
     }
 
     const handleSlideMasters = async () => {
-        resetCount()
-        // call a new function to get the slide masters
-        // on the server side, get the slide masters and get the colors with their shape ids.
-        // on the client side, filter these colors for uniqueness and add them to the colors list.
-        setSelection('slideMasters')
 
-        if(!slideMastersResponse){
-            const response = await serverFunctions.loadSlideMasterColors( colorsObject ) ;
 
-            if(response){
+        // the idea behind the getting of the slidemaster colors
+        // is that they will never be loaded initally, only until user checks
+        // this is to avoid any performance slow down. 
 
-                setSlideMastersResponse( JSON.stringify(response.colorsObject) )
+        // So in order for this to load , we should make sure the current scope is 
+        // presentation, and if not, set it to presentation.
 
-                setColors(
-                    {
-                        colorsData: response.colorsObject,
-                        scopeData: currentScope
-                    }
-                )
+        if(!selection.slideMasters){
 
-            }else{
-                setSlideMastersResponse( 'No response from server' )
+            if(currentScope !== 'presentation'){
+                setScope('presentation')
             }
+    
+            resetCount()
+            // call a new function to get the slide masters
+            // on the server side, get the slide masters and get the colors with their shape ids.
+            // on the client side, filter these colors for uniqueness and add them to the colors list.
+            setSelection('slideMasters')
+    
+            if(!colorsPlusSlideMasterRaw){
+                const response = await serverFunctions.loadSlideMasterColors( colorsObject ) ;
+    
+                if(response){
+    
+                    setSlideMastersResponse( JSON.stringify(response) )
+    
+                    addSlideMasters(
+                        {
+                            colorsData: response.colorsObject,
+                        }
+                    )
+    
+                }else{
+                    setSlideMastersResponse( 'No response from server' )
+                }
+            }else{
+                addSlideMasters({ colorsData: colorsPlusSlideMasterRaw })
+            }
+
+        }else{
+            setSelection('slideMasters')
         }
+
     }
 
     return (

@@ -613,49 +613,91 @@ const getColors = async (shapes, shapeIdsAndElementsObject) => {
 
 
 export const loadSlideMasterColors = async (colorsObject) => {
-    // let presentation = SlidesApp.getActivePresentation()
-    // let masters = presentation.getSlideMasters()
+    let startTime = Date.now()
+    let presentation = SlidesApp.getActivePresentation()
+    let masters = presentation.getMasters()
+  
+    masters.forEach((master, index) => {            
+      let shapes = master.getShapes()
+      let colorScheme = shapes[0].getParentPage().getColorScheme()
 
-    // masters.forEach((master, index) => {
-        
+      shapes.forEach((shape, index) => {
 
-    //     let shapes = master.getShapes()
-    //     shapes.forEach((shape, index) => {
-            
-    //         let shapeId = shape.getObjectId()
-    //         let gotColor =  shape.getFill().getSolidFill().getColor()
-    //         let colorType = gotColor.getColorType()
-
-    //         if(colorType == 'THEME'){
-    //             // add shapIdsArray if it doesn't exist
-    //             if(!colorsObject[shapeId]){
-    //                 colorsObject[shapeId] = { fill: '#FF0000' }
-    //             }else{
-    //                 colorsObject[shapeId].fill = '#FF0000'
-    //             }
-    //         }
-    //         if(colorType == 'RGB'){
-    //             // add shapIdsArray if it doesn't exist
-    //             if(!colorsObject[shapeId]){
-    //                 colorsObject[shapeId] = { fill: '#FF0000' }
-    //             }else{
-    //                 colorsObject[shapeId].fill = '#FF0000'
-    //             }
-    //         }
-    //     })
-    // });
-
-    colorsObject["sm2e0SM361bd_1_4"] = {
-        isSM: true,
-        isTable: false,
-        fill: '#FF0000',
-        border: null,
-        font: '#FF3232'
-    }
+        let shapeId = shape.getObjectId()
+        let solidFill = shape.getFill().getSolidFill()
+  
+        if(solidFill !== null){
+          let gotColor = solidFill.getColor()        
+          let colorType = gotColor.getColorType()
+  
+          if(colorType == 'THEME'){
+            let THEMECOLOR = gotColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
+            shapeFillColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
+  
+            if(!colorsObject[shapeId]){
+                colorsObject[shapeId] = { 
+                  isSM: true,
+                  isTable: false,
+                  fill: shapeFillColor,
+                  border: null,
+                  font: null
+                }
+            } else{ colorsObject[shapeId].fill = shapeFillColor }
+          }
+          else if(colorType == 'RGB'){
+            let shapeFillColor = gotColor.asRgbColor().asHexString()
+  
+            if(!colorsObject[shapeId]){
+                colorsObject[shapeId] = { 
+                  isSM: true,
+                  isTable: false,
+                  fill: shapeFillColor,
+                  border: null,
+                  font: null
+                }
+            } else{ colorsObject[shapeId].fill = shapeFillColor }
+          }
+        }
+  
+        let shapeTextRange = shape.getText()
+  
+        if(!shapeTextRange.isEmpty()){
+          let fontForegroundColor = shapeTextRange.getTextStyle().getForegroundColor()
+          
+          if(fontForegroundColor){
+            let colorType = fontForegroundColor.getColorType()
+            if(colorType == "THEME"){
+              let THEMECOLOR = fontForegroundColor.asThemeColor().getThemeColorType() // some kind of ACCENT1, ACCENT2, DARK1 etc
+              let shapeFontColor = colorScheme.getConcreteColor(THEMECOLOR).asRgbColor().asHexString()
+                            
+              if(!colorsObject[shapeId]){
+                  colorsObject[shapeId] = { 
+                      isSM: true,
+                      isTable: false,
+                      fill: null,
+                      border: null,
+                      font: shapeFontColor
+                  }
+              }else{  colorsObject[shapeId].font = shapeFontColor  }
+            }else if(colorType == "RGB"){
+              let shapeFontColor = fontForegroundColor.asRgbColor().asHexString()
+              if(!colorsObject[shapeId]){
+                  colorsObject[shapeId] = { 
+                      isSM: true,
+                      isTable: false,
+                      fill: null,
+                      border: null,
+                      font: shapeFontColor
+                  }
+              }else{ colorsObject[shapeId].font = shapeFontColor }
+            }
+          }
+        }
+      })
+    });
 
     return  {
+        Time: Date.now() - startTime,
         colorsObject: colorsObject
     }
-
-
 }
